@@ -6,6 +6,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import ProfileImageData from "./profileImageData"
 import CoverImageData from "./coverImageData"
+import AddBio from "./addBio"
 
 const Profile = (props) => {
   const InputVisibilityHidden =  false
@@ -53,11 +54,7 @@ const Profile = (props) => {
                 </View>
               
               </View>
-              <View style = {styles.AddBio}>
-                <TouchableOpacity>
-                <Text style = {{textAlign:"center" , fontSize : 20 , height : 50,color:'gray'  }}>+Add a Bio</Text>
-                </TouchableOpacity>
-              </View>
+              <AddBio/>
               <View style = {styles.EditBio}>
               <TextInput 
                     
@@ -147,12 +144,6 @@ const styles = StyleSheet.create({
     textAlign:'center',
     color:'gray'
    
-  },
-  AddBio:{
-    textAlign:"center",
-    marginTop:100,
-    
-    
   },
   EditBio:{
     borderRadius:8,
