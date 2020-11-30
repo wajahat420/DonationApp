@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 
 export default function imageData() {
-      const [image,setImage] = useState(null)
+      const [image,setImage] = useState("file:/data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Fdummy-63c5f8f5-111e-4a89-85d5-cc508345c7fd/ImagePicker/9b15bacd-78f7-418c-a740-cd2252e6e00b.jpg")
       useEffect(() => {
             (async () => {
                   if (Platform.OS !== 'web') {
@@ -45,16 +45,17 @@ export default function imageData() {
 }
 const styles = StyleSheet.create({
       addImg:{
+            height:200
             // display:"flex",
             // flexDirection:"row-reverse",
       },
       addImgTxt:{
             backgroundColor:"red",
-            color:"#268c77",
+            color:"white",
             padding:10,
             marginRight:10,
             marginLeft:"auto",
-            backgroundColor:"white",
+            backgroundColor:"#268c77",
             marginTop:20,
             zIndex :10000
           },

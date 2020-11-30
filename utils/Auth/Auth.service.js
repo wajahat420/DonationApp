@@ -23,7 +23,7 @@ export const RegisterUser = async (name, email, password, history) => {
 export const UserLogin = (email, password, history) => {
   Firebase.auth()
     .signInWithEmailAndPassword(email, password)
-    .then(() => history.navigate("PostFeed"))
+    .then(() => history.navigate("PostFeed")) 
     .catch((error) => console.log(error));
 };
 

@@ -5,7 +5,7 @@ export default class addBio extends Component {
 
       state = {
             disabled : true,
-            maxLength : 10,
+            maxLength : 160,
             text : "",
             save : "",
             insertBio : false
@@ -22,7 +22,7 @@ export default class addBio extends Component {
                         </View>
            
             if(this.state.insertBio ){
-                  showInserBio = <View>
+                  showInserBio = <View style={{marginTop:20}}>
                                     <Text style={{marginLeft:"auto",marginRight:25}}>{this.state.text.length}/{this.state.maxLength}</Text>
                                     <TextInput 
                                           multiline

@@ -1,12 +1,13 @@
 
 import React, { useState,useEffect } from "react";
-import { View, Text, StyleSheet,TouchableOpacity,TextInput,ScrollView} from "react-native";
+import { View, Text, StyleSheet,TouchableOpacity,TextInput,ScrollView,Share} from "react-native";
 import NavHeader from "../Header/Header";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import ProfileImageData from "./profileImageData"
 import CoverImageData from "./coverImageData"
 import AddBio from "./addBio"
+import Firebase from "../../config/Firebase";
 
 const Profile = (props) => {
   const InputVisibilityHidden =  false
@@ -18,8 +19,19 @@ const Profile = (props) => {
     selectedIndex == 0 ? props.navigation.navigate("PostFeed") : null;
   };
   const history = props.navigation;
-
-
+  const shareOptions = {
+    title: 'App link',
+    message: 'Please install this app and stay safe , AppLink :https://play.google.com/store/apps/details?id=nic.goi.aarogyasetu&hl=en', 
+    url: 'https://play.google.com/store/apps/details?id=nic.goi.aarogyasetu&hl=en'
+  };
+  async function get(){
+    console.log("working")
+    const user = FirebaseAuth.getInstance().getCurrentUser();
+    const userid = user.getUid();
+    console.log(Firebase.auth().currentUser);
+    console.log(user,userid)  
+  }
+  get()
   return (
     <>
       <View style={styles.container2}>
@@ -32,16 +44,17 @@ const Profile = (props) => {
       {/* <Text>Profile Screen</Text> */}
         <ScrollView>
 
-              <View style={{height:200}}>
-                <CoverImageData/>
-                <ProfileImageData/>
-              </View>
+              <CoverImageData/>
+              <ProfileImageData/>
               <View style={styles.follow}>
                 <View style={styles.profileDetail}>
                   <Entypo  name="dots-three-vertical" size={25} color="#268c77"/>
                 </View>
                 <View style={styles.profileDetail}>
-                  <AntDesign  name="sharealt" size={25} color="#268c77"/>
+                  <TouchableOpacity onPress={()=>Share.share(shareOptions)}>
+                    <AntDesign  name="sharealt" size={25} color="#268c77"/>
+                  </TouchableOpacity>
+                  {/* <Share/> */}
                 </View>
                 <View style={styles.profileDetail}>
                   <Text style = {{textAlign:'center', color:'gray'}}>0</Text>
