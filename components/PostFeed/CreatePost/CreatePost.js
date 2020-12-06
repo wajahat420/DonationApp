@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text, TouchableOpacity, Image } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, Image ,Alert} from "react-native";
 import { Header, Icon, Avatar, Input } from "react-native-elements";
 import {
   getCurrentUserData,
@@ -11,6 +11,9 @@ const CreatePost = (props) => {
   const [value, setValue] = useState("");
   const [loggedUserName, setLoggedUserName] = useState();
   const [userID, setUserID] = useState();
+  const [categories,setCategories] = useState(["Education","Food","Donation"])
+  const [selectedCategory,setSelectedCategory] = useState("Category")
+  const [displayCategory,setdisplayCategory] = useState("none")
 
   useEffect(() => {
     Firebase.auth().onAuthStateChanged(function (user) {
@@ -24,7 +27,19 @@ const CreatePost = (props) => {
       }
     });
   });
-
+  const createTwoButtonAlert = () =>
+    Alert.alert(
+      "Missing..!",
+      "Select Category Please",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        }
+        // { text: "OK", onPress: () => console.log("OK Pressed") }
+      ],
+      { cancelable: false }
+    );
   const LeftIcon = () => {
     return (
       <View style={{ flexDirection: "row" }}>
@@ -43,9 +58,14 @@ const CreatePost = (props) => {
     return (
       <TouchableOpacity
         onPress={() => {
-          const imgURL = "https://i.postimg.cc/fyx4WSzS/default-avatar.jpg;";
-          createPost(loggedUserName, value, imgURL);
-          props.navigation.navigate("PostFeed");
+          if(selectedCategory === "Category" ){
+            // console.log(selectedCategory)
+            createTwoButtonAlert()
+          }else{
+            const imgURL = "https://i.postimg.cc/fyx4WSzS/default-avatar.jpg;";
+            createPost(loggedUserName, value, imgURL,selectedCategory);
+            props.navigation.navigate("PostFeed");
+          }
         }}
         style={{ marginRight: 14 }}
       >
@@ -118,12 +138,41 @@ const CreatePost = (props) => {
             </View>
           </View>
         </View>
-        <View style={{ marginTop: 20 }}>
-          <Input
-            placeholder="Share your thoughts here"
-            onChangeText={(value) => setValue(value)}
-            style={{ fontSize: 15, marginLeft: 10 }}
-          />
+        <View style={{ marginTop: 20, display:"flex", flexDirection : "row" }}>
+          <View style={{flex:1,marginTop : 12,marginLeft:5}}>
+            <TouchableOpacity onPress={()=>setdisplayCategory(displayCategory == "none" ? "flex" : "none")}>
+              <Text style={{paddingBottom:10,fontSize:13,textAlign:"center",borderColor:"gray",borderBottomWidth:1}}>{selectedCategory}</Text>
+            </TouchableOpacity>
+            {categories.map((elem,index)=>
+              <TouchableOpacity onPress={()=>setSelectedCategory(elem)}>
+                 <View style={{display:displayCategory}}>
+                   <Text 
+                     style={{
+                      display:selectedCategory == elem ? "none" : "flex",
+                      padding:0,
+                      paddingBottom:10,
+                      paddingTop:6,
+                      fontSize:13,
+                      textAlign:"center",
+                      borderColor:"gray",
+                      borderBottomWidth:1
+                    }}
+                     key={index}
+                     >
+                       {elem}
+                   </Text>
+
+                </View> 
+              </TouchableOpacity>
+            )}
+          </View> 
+          <View style={{flex:5,  margin: 0}}>
+            <Input
+              placeholder="Share your thoughts here"
+              onChangeText={(value) => setValue(value)}
+              style={{ fontSize: 15, flex: 1,margin:0 }}
+            />
+          </View>
         </View>
       </View>
     </>

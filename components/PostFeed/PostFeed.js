@@ -18,8 +18,8 @@ import {
 } from "react-native-elements";
 import MainCarousel from "../Carousel/Carousel";
 import Firebase from "../../config/Firebase";
-
 const PostFeed = (props) => {
+  // props.navigation.navigate("Login")
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [posts, setPosts] = useState([]);
 
@@ -30,18 +30,24 @@ const PostFeed = (props) => {
   };
 
   useEffect(() => {
+    console.log("useEffect")
     var postFeeds = Firebase.database().ref("/posts");
     postFeeds.once("value").then((snapshot) => {
       const data = snapshot.val();
-      var myData = Object.keys(data).map((key) => {
-        return data[key];
-      });
+      console.log("data",data)
+      myData = []
+      if(data != null){
+        var myData = Object.keys(data).map((key) => {
+          return data[key];
+        });
+      }
+      console.log("POSTS", myData);
 
       setPosts(myData);
     });
   }, []);
 
-  // console.log("PostFeeds", posts);
+  console.log("posts", posts);
 
   const getAllPosts = posts.map((data) => {
     return (
@@ -168,7 +174,7 @@ const PostFeed = (props) => {
           props.navigation.navigate("CreatePost");
         }}
         style={{ marginLeft: 0 }}
-      >
+      >       
         <Text style={{ color: "#737373", fontSize: 16 }}>
           Share your thoughts or photos
         </Text>
@@ -201,8 +207,7 @@ const PostFeed = (props) => {
         />
 
         <ScrollView>
-          <MainCarousel />
-
+          <MainCarousel />  
           <View>{getAllPosts}</View>
         </ScrollView>
         <Footer history={history} />

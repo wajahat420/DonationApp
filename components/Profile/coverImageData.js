@@ -28,6 +28,7 @@ export default function imageData() {
       
             if (!result.cancelled) {
                   setImage(result.uri);
+                  console.log(result.uri)
             }
       };
       return (

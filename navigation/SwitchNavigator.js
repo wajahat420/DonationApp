@@ -11,11 +11,11 @@ import AddFunds from "../components/AddFunds/AddFunds";
 import CreatePost from "../components/PostFeed/CreatePost/CreatePost";
 const SwitchNavigator = createSwitchNavigator(
   {
-    Landing: {
-      screen: Landing,
-    },
     Login: {
       screen: Login,
+    },
+    Landing: {
+      screen: Landing,
     },
     Signup: {
       screen: Signup,
@@ -45,7 +45,7 @@ const SwitchNavigator = createSwitchNavigator(
     },
   },
   {
-    initialRouteName: "PostFeed",
+    initialRouteName: "Login",
   }
 );
 

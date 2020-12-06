@@ -19,7 +19,6 @@ export default function imageData() {
       }, []);
             
       const pickImage = async () => {
-            console.log("working")
             let result = await ImagePicker.launchImageLibraryAsync({
                   mediaTypes: ImagePicker.MediaTypeOptions.All,
                   allowsEditing: true,
@@ -41,11 +40,6 @@ export default function imageData() {
                         source={{uri:image}}  
                         style={{width: 120, height: 120, borderRadius: 200/ 2, borderWidth:1 , borderColor:"gray"}} 
                         />
-                        {/* <View style={{marginLeft:90,position:"relative",display:"flex",alignItems:"center",top:-40}}>
-                              <TouchableOpacity  onPress={pickImage}>
-                                    <Feather  style={{padding:10,marginBottom:-20,backgroundColor:" rgb(163, 163, 163)",borderRadius:15,color:" rgb(40, 70, 15)"}} name="camera" size={15} />
-                              </TouchableOpacity>
-                        </View> */}
                         <View style={{marginLeft:90,position:"relative",display:"flex",alignItems:"center",top:-40}}>
                               <TouchableOpacity  onPress={pickImage}>
                                     <Feather style={{padding:6,backgroundColor:"gray",borderRadius:20,marginRight:0,color:"white"}} name="camera" size={15} />
@@ -56,7 +50,6 @@ export default function imageData() {
                               <Text style = {{fontSize:11 , marginLeft : 5,color:'gray'}}>@aunjafri</Text>
                         </View>
                   </View>
-
       )
 }
 const styles = StyleSheet.create({

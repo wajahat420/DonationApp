@@ -21,7 +21,7 @@ class Signup extends React.Component {
     const history = this.props.navigation;
     RegisterUser(name, email, password, history);
   };
-
+  
   render() {
     return (
       <View style={styles.container}>
