@@ -19,6 +19,7 @@ class Login extends React.Component {
     const { email, password } = this.state;
     const history = this.props.navigation;
     UserLogin(email, password, history);
+    console.log(history)
   };
 
   render() {
@@ -46,6 +47,7 @@ class Login extends React.Component {
           title="Don't have an account yet? Sign up"
           type="clear"
           onPress={() => this.props.navigation.navigate("Signup")}
+          
         />
       </View>
     );

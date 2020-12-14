@@ -46,7 +46,7 @@ const NavHeader = (props) => {
       </TouchableOpacity>
     );
   };
-  const buttons = ["Global", "Following", "Personal"];
+  const buttons = ["Global", "Categories", "Personal"];
   return (
     <>
       <View style={styles.container}></View>

@@ -1,15 +1,21 @@
 
 import React, { useState,useEffect } from "react";
-import { View, Text, StyleSheet,TouchableOpacity,TextInput,ScrollView,Share} from "react-native";
+import { View, Text, StyleSheet,TouchableOpacity,TextInput,ScrollView,Share , Button} from "react-native";
 import NavHeader from "../Header/Header";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import ProfileImageData from "./profileImageData"
 import CoverImageData from "./coverImageData"
-import AddBio from "./addBio"
+import AddBio from "./addBio";
 import Firebase from "../../config/Firebase";
 
+
 const Profile = (props) => {
+
+  const history = props.navigation;
+  HandleSignOut = ()=>{
+  history.navigate("Login")
+  }
   const InputVisibilityHidden =  false
   const [selectedIndex, setSelectedIndex] = useState(2);
 
@@ -18,7 +24,7 @@ const Profile = (props) => {
     selectedIndex == 1 ? props.navigation.navigate("FollowingGroup") : null;
     selectedIndex == 0 ? props.navigation.navigate("PostFeed") : null;
   };
-  const history = props.navigation;
+ 
   const shareOptions = {
     title: 'App link',
     message: 'Please install this app and stay safe , AppLink :https://play.google.com/store/apps/details?id=nic.goi.aarogyasetu&hl=en', 
@@ -32,6 +38,8 @@ const Profile = (props) => {
     console.log(user,userid)  
   }
   get()
+  
+  
   return (
     <>
       <View style={styles.container2}>
@@ -117,9 +125,12 @@ const Profile = (props) => {
                   
                 </View>
                 </TouchableOpacity>
-         
-
-                
+         <Button
+         title = 'SignOut'
+         type = 'clear'
+         onPress={this. HandleSignOut}
+         />
+           
         </ScrollView>
       </View>
     </>

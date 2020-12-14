@@ -17,9 +17,17 @@ class Signup extends React.Component {
   };
 
   handleSignUp = () => {
+    const strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
     const { name, email, password } = this.state;
     const history = this.props.navigation;
-    RegisterUser(name, email, password, history);
+    if(strongRegex.test(this.state.password) === true){
+       RegisterUser(name, email, password, history);
+      
+    }
+  else{
+    alert('passwort must contain alphabet,string and number')
+
+  }
   };
   
   render() {
@@ -43,7 +51,8 @@ class Signup extends React.Component {
           value={this.state.password}
           onChangeText={(password) => this.setState({ password })}
           placeholder="Password"
-          secureTextEntry={true}
+          // secureTextEntry={true}
+          
         />
         <TouchableOpacity style={styles.button} onPress={this.handleSignUp}>
           <Text style={styles.buttonText}>Signup</Text>
@@ -54,6 +63,7 @@ class Signup extends React.Component {
           type="clear"
           onPress={() => this.props.navigation.navigate("Login")}
         />
+        
       </View>
     );
   }

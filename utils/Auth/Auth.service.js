@@ -18,6 +18,7 @@ export const RegisterUser = async (name, email, password, history) => {
     }
   } catch (error) {
     console.log(`error:, ${error}`);
+    
   }
 };
 
@@ -28,7 +29,9 @@ export const UserLogin = (email, password, history) => {
       console.log("res",res)
       history.navigate("PostFeed")
     }) 
-    .catch((error) => console.log("error",error));
+    .catch((error) => (alert("Invalid")));
+   
+
 };
 
 export const createPost = (loggedUserName, value, imgURL,category) => {
@@ -46,21 +49,13 @@ export const createPost = (loggedUserName, value, imgURL,category) => {
       category
     });
 };
-// export const getCurrentUserData = () => {
-//   Firebase.auth().onAuthStateChanged(function (user) {
-//     if (user) {
-//       return {
-//         displayName: user.displayName,
-//         email: user.email,
-//         photoURL: user.photoURL,
-//         userId: user.uid,
-//       };
-//     } else {
-//       // User is signed out.
-//       // ...
-//     }
-//   });
-// };
-
+// export const signOutUser = async () => {
+//   try {
+//       await firebase.auth().signOut();
+//       history.navigate('Login');
+//   } catch (e) {
+//       console.log(e);
+//   }
+// }
 
 

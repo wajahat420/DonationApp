@@ -42,14 +42,15 @@ const CreatePost = (props) => {
     );
   const LeftIcon = () => {
     return (
-      <View style={{ flexDirection: "row" }}>
+      <View style={{ flexDirection: "row" ,marginRight:100}}>
         <TouchableOpacity
           onPress={() => {
-            // console.log("A Pressed!");
+            const history = props.navigation
+            history.navigate('PostFeed')
           }}
           style={{ marginLeft: 14 }}
         >
-          <Icon name="pencil" type="evilicon" color="#fff" size={35} />
+          <Icon name="arrow-back" type="Ionicons" color="#fff" size={25} />
         </TouchableOpacity>
       </View>
     );

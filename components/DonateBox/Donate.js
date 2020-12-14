@@ -1,11 +1,16 @@
 import React from "react";
+
 import { View, StyleSheet, Text } from "react-native";
 import { TouchableOpacity, Image } from "react-native";
 import { Header } from "react-native-elements";
 import { Icon } from "react-native-elements";
 import { Button } from "react-native-elements";
+
+
 class Donation extends React.Component {
+  
   render() {
+   
     const LogoIcon = () => {
       return (
         <TouchableOpacity
@@ -22,11 +27,29 @@ class Donation extends React.Component {
         </TouchableOpacity>
       );
     };
+
+    const LeftIcon = () =>{
+      return(
+        <View>
+           <TouchableOpacity
+           onPress={() => {
+            this.props.navigation.navigate("PostFeed");
+          }}
+           >
+             <Icon name="arrow-back" type="Ionicons" color="#fff" size={25} />
+             
+
+           </TouchableOpacity>
+
+        </View>
+      )
+    }
     return (
       <>
         <Header
           style={styles.Header}
-          leftComponent={{ icon: "ei-left", type: "chevron", color: "#fff" }}
+          
+          leftComponent={()=>LeftIcon()}
           centerComponent={{ text: "PAYMENT METHOD", style: { color: "#fff" } }}
           rightComponent={{ icon: "user", type: "entypo", color: "#fff" }}
           containerStyle={{

@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Header } from "react-native-elements";
 import { Switch } from "react-native";
-
+import { Icon } from "react-native-elements";
 // import { Button } from "react-native-elements";
 // import { Switch } from "react-native-gesture-handler";
 class AddFunds extends React.Component {
@@ -30,6 +30,22 @@ class AddFunds extends React.Component {
         </TouchableOpacity>
       );
     };
+    const LeftIcon = () =>{
+      return(
+        <View>
+           <TouchableOpacity
+           onPress={() => {
+            this.props.navigation.navigate("Donation");
+          }}
+           >
+             <Icon name="arrow-back" type="Ionicons" color="#fff" size={25} />
+             
+
+           </TouchableOpacity>
+
+        </View>
+      )
+    }
 
     const righticon = () => {
       return <Switch></Switch>;
@@ -38,7 +54,7 @@ class AddFunds extends React.Component {
       <>
         <Header
           style={styles.Header}
-          leftComponent={{ icon: "left", color: "#fff" }}
+          leftComponent={()=>LeftIcon()}
           centerComponent={{ text: "ADD FUNDS", style: { color: "#fff" } }}
           rightComponent={{ icon: "user", type: "entypo", color: "#fff" }}
           containerStyle={{
