@@ -1,20 +1,24 @@
 import Firebase from "../../config/Firebase";
 
+
 export const RegisterUser = async (name, email, password, history) => {
   try {
     const userCredentials = await Firebase.auth().createUserWithEmailAndPassword(
       email,
       password
     );
+    
     if (userCredentials.user) {
       console.log("entry")
       await userCredentials.user.updateProfile({
         displayName: name,
-        photoURL: "https://i.postimg.cc/zf4W6thw/default-avatar.jpg",
+        photoURL: "https://i.postimg.cc/zf4W6thw/default-avatar.jpg"
       });
       await userCredentials.user.reload();
       history.navigate("PostFeed");
-      console.log("register" ,Firebase.auth().currentUser.displayName);
+      console.log("register" ,Firebase.auth().currentUser);
+    }else{
+      console.log("else",userCredentials)
     }
   } catch (error) {
     console.log(`error:, ${error}`);
@@ -34,21 +38,105 @@ export const UserLogin = (email, password, history) => {
 
 };
 
-export const createPost = (loggedUserName, value, imgURL,category) => {
+export const createPost = (loggedUserName,userID, value, imgURL,category) => {
   var id = Math.floor(Math.random() * 100) + 1;
-  let userID = id.toString();
+  id = id.toString();
   const profilePicture = null;
   console.log(loggedUserName,value,imgURL) 
   Firebase.database()
-    .ref("posts/" + userID)
+    .ref("posts/" + id)
     .set({
       username: loggedUserName,
+      userID,
       textMsg: value,
       profile_picture: profilePicture,
       imageUrl: imgURL,
       category
     });
 };
+
+export const updateProfileImg = (userID,imgBase64) => {
+  var id = Math.floor(Math.random() * 100) + 1;
+  id = id.toString();
+  
+  var additional_info = Firebase.database().ref("/additional_info");
+  additional_info.once("value").then((snapshot) => {
+    const data = snapshot.val();
+    
+    myData = []
+    var id_additional_info = null
+    if(data != null){
+      Object.keys(data).forEach(elem=>{
+        let obj = data[elem]
+        if(obj.userID == userID){
+          id_additional_info = elem
+        }
+      })
+      if(id_additional_info == null){
+        Firebase.database()
+        .ref("additional_info/" + id)
+        .set({
+          userID,
+          profile_picture: imgBase64,
+          cover_picture : "",
+          following : 0,
+          followers : 0
+        });
+      }else{
+        Firebase.database()
+        .ref("additional_info")
+        .child(id_additional_info)
+        .update({ 
+          profile_picture: imgBase64,
+        });
+      }
+   
+    }
+    
+  });
+};
+
+export const updateCoverImg = (userID,imgBase64) => {
+  var id = Math.floor(Math.random() * 100) + 1;
+  id = id.toString();
+  
+  var additional_info = Firebase.database().ref("/additional_info");
+  additional_info.once("value").then((snapshot) => {
+    const data = snapshot.val();
+    
+    myData = []
+    var id_additional_info = null
+    if(data != null){
+      Object.keys(data).forEach(elem=>{
+        let obj = data[elem]
+        if(obj.userID == userID){
+          id_additional_info = elem
+        }
+      })
+      if(id_additional_info == null){
+        Firebase.database()
+        .ref("additional_info/" + id)
+        .set({
+          userID,
+          profile_picture: "",
+          cover_picture : imgBase64,
+          following : 0,
+          followers : 0
+        });
+      }else{
+        Firebase.database()
+        .ref("additional_info")
+        .child(id_additional_info)
+        .update({
+          cover_picture: imgBase64 ,
+        });
+      }
+   
+    }
+    
+  });
+};
+
 // export const signOutUser = async () => {
 //   try {
 //       await firebase.auth().signOut();

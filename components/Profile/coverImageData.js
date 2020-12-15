@@ -1,10 +1,15 @@
 import React,{useState,useEffect} from 'react'
 import { View, Text,StyleSheet,Image, TouchableOpacity } from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
+import { updateCoverImg } from "../../utils/Auth/Auth.service"
 
 
-export default function imageData() {
-      const [image,setImage] = useState("file:/data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Fdummy-63c5f8f5-111e-4a89-85d5-cc508345c7fd/ImagePicker/9b15bacd-78f7-418c-a740-cd2252e6e00b.jpg")
+export default function imageData(props) {
+      const [image,setImage] = useState("")
+
+      if(props.cover_picture !== "" && image === ""){
+            setImage(props.cover_picture)
+      }
       useEffect(() => {
             (async () => {
                   if (Platform.OS !== 'web') {
@@ -21,24 +26,25 @@ export default function imageData() {
                   mediaTypes: ImagePicker.MediaTypeOptions.All,
                   allowsEditing: true,
                   aspect: [4, 3],
+                  base64 : true,
                   quality: 1,
             });
       
-            console.log("result==> ",result);
-      
             if (!result.cancelled) {
-                  setImage(result.uri);
-                  console.log(result.uri)
+                  setImage(result.base64);
+                  updateCoverImg(props.userID,result.base64)
+
             }
       };
+    
       return (
             <View style={styles.addImg}>
                   <Image 
                         resizeMode={'contain'}
-                        source={{uri:image}}  
+                        source={{uri:`data:image/png;base64,${image}`}}  
                         style={{width:"100%",top:0,height:200,resizeMode: 'stretch',position:"absolute"}} 
-                  /> 
-                  <TouchableOpacity onPress={pickImage}>
+                  />                  
+                   <TouchableOpacity onPress={pickImage}>
                       <Text style={styles.addImgTxt}>Add Image</Text>
                   </TouchableOpacity>
             </View>
@@ -47,8 +53,7 @@ export default function imageData() {
 const styles = StyleSheet.create({
       addImg:{
             height:200
-            // display:"flex",
-            // flexDirection:"row-reverse",
+          
       },
       addImgTxt:{
             backgroundColor:"red",

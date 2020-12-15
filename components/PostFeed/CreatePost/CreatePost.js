@@ -9,7 +9,7 @@ import Firebase from "../../../config/Firebase";
 
 const CreatePost = (props) => {
   const [value, setValue] = useState("");
-  const [loggedUserName, setLoggedUserName] = useState();
+  const [loggedUser, setLoggedUserName] = useState();
   const [userID, setUserID] = useState();
   const [categories,setCategories] = useState(["Education","Food","Donation"])
   const [selectedCategory,setSelectedCategory] = useState("Category")
@@ -17,8 +17,10 @@ const CreatePost = (props) => {
 
   useEffect(() => {
     Firebase.auth().onAuthStateChanged(function (user) {
+      // console.log("user =>", user)
+      // console.log(user.photoURL)
       if (user) {
-        console.log(user.displayName, user.uid);
+        // console.log(user.displayName, user.uid);
         setLoggedUserName(user.displayName);
         setUserID(user.uid);
       } else {
@@ -64,10 +66,10 @@ const CreatePost = (props) => {
             createTwoButtonAlert()
           }else{
             const imgURL = "https://i.postimg.cc/fyx4WSzS/default-avatar.jpg;";
-            createPost(loggedUserName, value, imgURL,selectedCategory);
+            createPost(loggedUser,userID, value, imgURL,selectedCategory);
             props.navigation.navigate("PostFeed");
           }
-        }}
+        }} 
         style={{ marginRight: 14 }}
       >
         <Text style={{ color: "#fff" }}>POST</Text>
@@ -113,7 +115,7 @@ const CreatePost = (props) => {
                   fontWeight: "bold",
                 }}
               >
-                {loggedUserName}
+                {loggedUser}
               </Text>
             </View>
             <View style={{ flexDirection: "row", paddingLeft: 10 }}>

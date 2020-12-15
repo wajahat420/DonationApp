@@ -30,7 +30,7 @@ const PostFeed = (props) => {
   };
 
   useEffect(() => {
-    console.log("useEffect")
+    // console.log("useEffect")
     var postFeeds = Firebase.database().ref("/posts");
     postFeeds.once("value").then((snapshot) => {
       const data = snapshot.val();
@@ -41,111 +41,111 @@ const PostFeed = (props) => {
           return data[key];
         });
       }
-      console.log("POSTS", myData);
+      // console.log("POSTS", myData);
 
       setPosts(myData);
     });
   }, []);
 
-  console.log("posts", posts);
+  // console.log("posts", posts);
 
-  const getAllPosts = posts.map((data) => {
-    return (
-      <>
-        <View
-          style={{
-            borderColor: "#e6e6e6",
-            paddingLeft: 20,
-            marginTop: 10,
-          }}
-        >
-          <View>
-            <View style={{ flexDirection: "row" }}>
-              <Avatar
-                rounded
-                size={25}
-                source={{
-                  uri: "https://i.postimg.cc/jS8fpDp4/default-avatar.jpg",
-                }}
-              />
-              <Text
-                style={{
-                  color: "#268c77",
-                  fontSize: 15,
-                  fontWeight: "bold",
-                  marginLeft: 5,
-                  paddingBottom: 5,
-                }}
-              >
-                {data.username}
-              </Text>
-            </View>
-          </View>
+  // const getAllPosts = posts.map((data) => {
+  //   return (
+  //     <>
+  //       <View
+  //         style={{
+  //           borderColor: "#e6e6e6",
+  //           paddingLeft: 20,
+  //           marginTop: 10,
+  //         }}
+  //       >
+  //         <View>
+  //           <View style={{ flexDirection: "row" }}>
+  //             <Avatar
+  //               rounded
+  //               size={25}
+  //               source={{
+  //                 uri: "https://i.postimg.cc/jS8fpDp4/default-avatar.jpg",
+  //               }}
+  //             />
+  //             <Text
+  //               style={{
+  //                 color: "#268c77",
+  //                 fontSize: 15,
+  //                 fontWeight: "bold",
+  //                 marginLeft: 5,
+  //                 paddingBottom: 5,
+  //               }}
+  //             >
+  //               {data.username}
+  //             </Text>
+  //           </View>
+  //         </View>
 
-          <Text style={{ color: "#787878" }}>{data.textMsg}</Text>
-          <View style={{ flexDirection: "row", marginTop: 10 }}>
-            <TouchableOpacity
-              onPress={() => {
-                // props.navigation.navigate("");
-              }}
-              style={{ marginLeft: 1, paddingBottom: 5 }}
-            >
-              <Image
-                style={{ width: 15, height: 15, marginRight: 10 }}
-                source={{
-                  uri:
-                    "https://i.postimg.cc/kXGpQtm3/206-2066210-thumb-up-icon-color-thumbs-up-like-icon-png.jpg",
-                }}
-              />
-            </TouchableOpacity>
+  //         <Text style={{ color: "#787878" }}>{data.textMsg}</Text>
+  //         <View style={{ flexDirection: "row", marginTop: 10 }}>
+  //           <TouchableOpacity
+  //             onPress={() => {
+  //               // props.navigation.navigate("");
+  //             }}
+  //             style={{ marginLeft: 1, paddingBottom: 5 }}
+  //           >
+  //             <Image
+  //               style={{ width: 15, height: 15, marginRight: 10 }}
+  //               source={{
+  //                 uri:
+  //                   "https://i.postimg.cc/kXGpQtm3/206-2066210-thumb-up-icon-color-thumbs-up-like-icon-png.jpg",
+  //               }}
+  //             />
+  //           </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => {
-                // props.navigation.navigate("");
-              }}
-              style={{ marginLeft: 1 }}
-            >
-              <Image
-                style={{ width: 15, height: 15, marginRight: 10 }}
-                source={{
-                  uri: "https://i.postimg.cc/BQtqwgFm/supporticon.jpg",
-                }}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                // props.navigation.navigate("");
-              }}
-              style={{ marginLeft: 1 }}
-            >
-              <Image
-                style={{ width: 15, height: 15, marginRight: 10 }}
-                source={{
-                  uri: "https://i.postimg.cc/63Qq0NfQ/242127.png",
-                }}
-              />
-            </TouchableOpacity>
-          </View>
-          <View style={{ width: 330, position: "relative", right: 10 }}>
-            <Input
-              placeholder="Comment"
-              leftIcon={
-                <Icon
-                  name="comment"
-                  type="evilicon"
-                  color="#737373"
-                  size={25}
-                />
-              }
-              style={{ fontSize: 13 }}
+  //           <TouchableOpacity
+  //             onPress={() => {
+  //               // props.navigation.navigate("");
+  //             }}
+  //             style={{ marginLeft: 1 }}
+  //           >
+  //             <Image
+  //               style={{ width: 15, height: 15, marginRight: 10 }}
+  //               source={{
+  //                 uri: "https://i.postimg.cc/BQtqwgFm/supporticon.jpg",
+  //               }}
+  //             />
+  //           </TouchableOpacity>
+  //           <TouchableOpacity
+  //             onPress={() => {
+  //               // props.navigation.navigate("");
+  //             }}
+  //             style={{ marginLeft: 1 }}
+  //           >
+  //             <Image
+  //               style={{ width: 15, height: 15, marginRight: 10 }}
+  //               source={{
+  //                 uri: "https://i.postimg.cc/63Qq0NfQ/242127.png",
+  //               }}
+  //             />
+  //           </TouchableOpacity>
+  //         </View>
+  //         <View style={{ width: 330, position: "relative", right: 10 }}>
+  //           <Input
+  //             placeholder="Comment"
+  //             leftIcon={
+  //               <Icon
+  //                 name="comment"
+  //                 type="evilicon"
+  //                 color="#737373"
+  //                 size={25}
+  //               />
+  //             }
+  //             style={{ fontSize: 13 }}
 
-              // onChangeText={(value) => this.setState({ comment: value })}
-            />
-          </View>
-        </View>
-      </>
-    );
-  });
+  //             // onChangeText={(value) => this.setState({ comment: value })}
+  //           />
+  //         </View>
+  //       </View>
+  //     </>
+  //   );
+  // });
 
   const LeftIcon = () => {
     return (
@@ -208,7 +208,7 @@ const PostFeed = (props) => {
 
         <ScrollView>
           <MainCarousel />  
-          <View>{getAllPosts}</View>
+          {/* <View>{getAllPosts}</View> */}
         </ScrollView>
         <Footer history={history} />
       </View>

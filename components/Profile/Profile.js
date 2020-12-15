@@ -1,5 +1,5 @@
 
-import React, { useState,useEffect } from "react";
+import React, { useState,useEffect,Component } from "react";
 import { View, Text, StyleSheet,TouchableOpacity,TextInput,ScrollView,Share , Button} from "react-native";
 import NavHeader from "../Header/Header";
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -10,132 +10,161 @@ import AddBio from "./addBio";
 import Firebase from "../../config/Firebase";
 
 
-const Profile = (props) => {
 
-  const history = props.navigation;
-  HandleSignOut = ()=>{
-  history.navigate("Login")
+export default class Profile extends Component {
+
+  constructor({navigation}){
+    super()
+    this.history = navigation
+    this.shareOptions =  {
+      title: 'App link',
+      message: 'Please install this app and stay safe , AppLink :https://play.google.com/store/apps/details?id=nic.goi.aarogyasetu&hl=en', 
+      url: 'https://play.google.com/store/apps/details?id=nic.goi.aarogyasetu&hl=en'
+    };
+    this.userID
   }
-  const InputVisibilityHidden =  false
-  const [selectedIndex, setSelectedIndex] = useState(2);
-
-  const updateIndex = (selectedIndex) => {
-    setSelectedIndex(selectedIndex);
-    selectedIndex == 1 ? props.navigation.navigate("FollowingGroup") : null;
-    selectedIndex == 0 ? props.navigation.navigate("PostFeed") : null;
-  };
- 
-  const shareOptions = {
-    title: 'App link',
-    message: 'Please install this app and stay safe , AppLink :https://play.google.com/store/apps/details?id=nic.goi.aarogyasetu&hl=en', 
-    url: 'https://play.google.com/store/apps/details?id=nic.goi.aarogyasetu&hl=en'
-  };
-  async function get(){
-    console.log("working")
-    const user = FirebaseAuth.getInstance().getCurrentUser();
-    const userid = user.getUid();
-    console.log(Firebase.auth().currentUser);
-    console.log(user,userid)  
+  state = {
+    selectedIndex : 2,
+    userID : "",
+    additional_info : {
+      profile_picture : "",
+      cover_picture : "",
+    }
   }
-  get()
+
+  updateIndex = (selectedIndex) => {
+    this.setState({selectedIndex})
+    selectedIndex == 1 ? this.history.navigate("FollowingGroup") : null;
+    selectedIndex == 0 ? this.history.navigate("PostFeed") : null;
+  };
   
+  componentDidMount(){
+    var userID = ""
+    Firebase.auth().onAuthStateChanged(function (user) {
+      if (user) {
+        userID = user.uid
+      } 
+    });
   
-  return (
-    <>
-      <View style={styles.container2}>
-        <NavHeader
-          history={history}
-          selectedIndex={selectedIndex}
-          setSelectedIndex={setSelectedIndex}
-          updateIndex={updateIndex}
-        />
-      {/* <Text>Profile Screen</Text> */}
-        <ScrollView>
+    
+    var additional_info = Firebase.database().ref("/additional_info");
+    additional_info.once("value").then((snapshot) => {
+      const data = snapshot.val();
+      const keys = Object.keys(data).slice(0,Object.keys(data).length)
+      let obj = {}
 
-              <CoverImageData/>
-              <ProfileImageData/>
-              <View style={styles.follow}>
-                <View style={styles.profileDetail}>
-                  <Entypo  name="dots-three-vertical" size={25} color="#268c77"/>
-                </View>
-                <View style={styles.profileDetail}>
-                  <TouchableOpacity onPress={()=>Share.share(shareOptions)}>
-                    <AntDesign  name="sharealt" size={25} color="#268c77"/>
-                  </TouchableOpacity>
-                  {/* <Share/> */}
-                </View>
-                <View style={styles.profileDetail}>
-                  <Text style = {{textAlign:'center', color:'gray'}}>0</Text>
-                  <Text style = {{color:'gray'}}>followers</Text>
-                </View>
-                <View style={styles.profileDetail}>
+      keys.forEach(elem=>{
 
-                  <Text style = {{textAlign:'center',color:"gray"}}>0</Text>
-                  <Text style = {{color:'gray'}}>following</Text>
-                </View>
-              
-              </View>
-              <AddBio/>
-              <View style = {styles.EditBio}>
-              <TextInput 
-                    
-                    underlineColorAndroid = "transparent"
-                    placeholder = " Type something"
-                    placeholderTextColor = "#9a73ef"
-                    autoCapitalize = "none"
-                    
-                    />
-              </View>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <View style={{flex: 1, height: 1, backgroundColor: 'gray'}} />
-                      <View>
-                          <Text style={{width: 130, textAlign: 'center',letterSpacing:2,color:'gray'}}>YOUR CAUZE</Text>
-                    </View>
-              <View style={{flex: 1, height: 1, backgroundColor: 'gray'}} />
-          </View>
-                <View style = {styles.Edit}>
-                  <TouchableOpacity>
-                  
-                    <Text style = {{textAlign : "right" , padding : 6, fontSize : 15, color:'gray'}} >edit</Text>
-                  </TouchableOpacity>
-                </View>
-                <TouchableOpacity>
-                <View style = {styles.AddACauze}>
-                  <Text style = {{textAlign : 'center' , fontSize : 18, color:'gray'}}>+</Text>
-                  
-                </View>
-                </TouchableOpacity>
-                <View style = {styles.ButtonAddCauze}>
-                  <TouchableOpacity>
-                  <Text style = {{fontSize:11 , fontWeight:'bold',color:'gray'}}> + Add a Cauze</Text>
-                  </TouchableOpacity>
+        if(data[elem].userID == userID  ){
+          
+          obj["profile_picture"] = data[elem].profile_picture
+          obj["cover_picture"] = data[elem].cover_picture 
+        }
+      })
+      this.setState({
+        userID,
+        additional_info: obj,
+      })
+      
+    });
+  }
+  render() {
+    return (
+      <>
+        <View style={styles.container2}>
+          <NavHeader
+            history={this.history}
+            selectedIndex={this.state.selectedIndex}
+            setSelectedIndex={this.setSelectedIndex}
+            updateIndex={this.updateIndex}
+          />
+          <ScrollView>
+  
+                <CoverImageData
+                    userID = {this.state.userID}
+                    cover_picture = {this.state.additional_info["cover_picture"]}
+
+                />
+                <ProfileImageData
+                  userID = {this.state.userID}
+                  profile_picture = {this.state.additional_info["profile_picture"]}
+                />
+                <View style={styles.follow}>
+                  <View style={styles.profileDetail}>
+                    <Entypo  name="dots-three-vertical" size={25} color="#268c77"/>
                   </View>
-                 
-
-                  <View style={{flexDirection: 'row', alignItems: 'center' , marginTop:13}}>
-                    <View style={{flex: 0.5, height: 1, backgroundColor: 'gray'}} />
-                      <View style = {styles.NonProfit}>
-                          <Text style={{width: 270, textAlign: 'center', letterSpacing: 2,color:'gray'}}>YOUR FAVOURITE NONPROFITS</Text>
-                    </View>
-                    <View style={{flex: 0.5, height: 1, backgroundColor: 'gray'}} />
+                  <View style={styles.profileDetail}>
+                    <TouchableOpacity onPress={()=>Share.share(this.shareOptions)}>
+                      <AntDesign  name="sharealt" size={25} color="#268c77"/>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.profileDetail}>
+                    <Text style = {{textAlign:'center', color:'gray'}}>0</Text>
+                    <Text style = {{color:'gray'}}>followers</Text>
+                  </View>
+                  <View style={styles.profileDetail}>
+  
+                    <Text style = {{textAlign:'center',color:"gray"}}>0</Text>
+                    <Text style = {{color:'gray'}}>following</Text>
+                  </View>
+                
+                </View>
+                <AddBio/>
+                <View style = {styles.EditBio}>
+                <TextInput 
+                      
+                  underlineColorAndroid = "transparent"
+                  placeholder = " Type something"
+                  placeholderTextColor = "#9a73ef"
+                  autoCapitalize = "none"
+                      
+                />
+                </View>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <View style={{flex: 1, height: 1, backgroundColor: 'gray'}} />
+                        <View>
+                            <Text style={{width: 130, textAlign: 'center',letterSpacing:2,color:'gray'}}>YOUR CAUZE</Text>
+                      </View>
+                <View style={{flex: 1, height: 1, backgroundColor: 'gray'}} />
+               </View>
+                  <View style = {styles.Edit}>
+                    <TouchableOpacity>
+                    
+                      <Text style = {{textAlign : "right" , padding : 6, fontSize : 15, color:'gray'}} >edit</Text>
+                    </TouchableOpacity>
                   </View>
                   <TouchableOpacity>
-                  <View style = {styles.LocalProfit}>
-                  <Text style = {{textAlign : 'center' , fontSize : 18 ,color:'gray'}}>+</Text>
-                  
-                </View>
-                </TouchableOpacity>
-         <Button
-         title = 'SignOut'
-         type = 'clear'
-         onPress={this. HandleSignOut}
-         />
-           
-        </ScrollView>
-      </View>
-    </>
-  );
-};
+                  <View style = {styles.AddACauze}>
+                    <Text style = {{textAlign : 'center' , fontSize : 18, color:'gray'}}>+</Text>
+                    
+                  </View>
+                  </TouchableOpacity>
+                  <View style = {styles.ButtonAddCauze}>
+                    <TouchableOpacity>
+                    <Text style = {{fontSize:11 , fontWeight:'bold',color:'gray'}}> + Add a Cauze</Text>
+                    </TouchableOpacity>
+                    </View>
+                   
+  
+                    <View style={{flexDirection: 'row', alignItems: 'center' , marginTop:13}}>
+                      <View style={{flex: 0.5, height: 1, backgroundColor: 'gray'}} />
+                        <View style = {styles.NonProfit}>
+                            <Text style={{width: 270, textAlign: 'center', letterSpacing: 2,color:'gray'}}>YOUR FAVOURITE NONPROFITS</Text>
+                      </View>
+                      <View style={{flex: 0.5, height: 1, backgroundColor: 'gray'}} />
+                    </View>
+                    <TouchableOpacity>
+                    <View style = {styles.LocalProfit}>
+                    <Text style = {{textAlign : 'center' , fontSize : 18 ,color:'gray'}}>+</Text>
+                    
+                  </View>
+                  </TouchableOpacity>
+          </ScrollView>
+        </View>
+      </>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -215,4 +244,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default Profile;
+// export default Profile;
