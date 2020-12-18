@@ -26,6 +26,7 @@ export default class Profile extends Component {
   state = {
     selectedIndex : 2,
     userID : "",
+    showLogout : false,
     additional_info : {
       profile_picture : "",
       cover_picture : "",
@@ -39,10 +40,11 @@ export default class Profile extends Component {
   };
   
   componentDidMount(){
-    var userID = ""
+    let userID = ""
     Firebase.auth().onAuthStateChanged(function (user) {
       if (user) {
         userID = user.uid
+        // this.setState({userID : user.uid})
       } 
     });
   
@@ -50,25 +52,41 @@ export default class Profile extends Component {
     var additional_info = Firebase.database().ref("/additional_info");
     additional_info.once("value").then((snapshot) => {
       const data = snapshot.val();
-      const keys = Object.keys(data).slice(0,Object.keys(data).length)
       let obj = {}
 
-      keys.forEach(elem=>{
-
-        if(data[elem].userID == userID  ){
+      Object.keys(data).forEach(elem=>{
+        if(data[elem].userID == userID){
           
           obj["profile_picture"] = data[elem].profile_picture
           obj["cover_picture"] = data[elem].cover_picture 
         }
       })
-      this.setState({
-        userID,
-        additional_info: obj,
-      })
-      
+      this.setState({additional_info: obj, userID})
     });
   }
   render() {
+    let logout = null
+    if(this.state.showLogout){
+
+      logout = 
+
+      <View style={{ position : "absolute",top :50,    }}>
+        <TouchableOpacity onPress={()=>this.history.navigate("Login")}>
+                  <Text style={{
+                            textAlign : "center",
+                            marginRight : 6,
+                            padding : 3,
+                            width : 60,
+                            borderColor : "gray",
+                            borderWidth : 1,
+                            color : "gray"
+                            }}
+                  >
+                    Logout
+                  </Text>
+      </TouchableOpacity>
+              </View>
+    }
     return (
       <>
         <View style={styles.container2}>
@@ -91,8 +109,11 @@ export default class Profile extends Component {
                 />
                 <View style={styles.follow}>
                   <View style={styles.profileDetail}>
-                    <Entypo  name="dots-three-vertical" size={25} color="#268c77"/>
+                    <TouchableOpacity onPress={()=>this.setState({showLogout : !this.state.showLogout})}>
+                        <Entypo  name="dots-three-vertical" size={25} color="#268c77"/>
+                    </TouchableOpacity>
                   </View>
+                    {logout}
                   <View style={styles.profileDetail}>
                     <TouchableOpacity onPress={()=>Share.share(this.shareOptions)}>
                       <AntDesign  name="sharealt" size={25} color="#268c77"/>

@@ -8,7 +8,6 @@ import { updateProfileImg } from "../../utils/Auth/Auth.service"
 export default function imageData(props) {
       const [image,setImage] = useState("")
     
-      console.log("user id...",props.userID)
       if(props.profile_picture !== "" && image === ""){
             setImage(props.profile_picture)
       }

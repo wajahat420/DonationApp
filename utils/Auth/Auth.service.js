@@ -41,7 +41,7 @@ export const UserLogin = (email, password, history) => {
 export const createPost = (loggedUserName,userID, value, imgURL,category) => {
   var id = Math.floor(Math.random() * 100) + 1;
   id = id.toString();
-  const profilePicture = null;
+  // const profilePicture = null;
   console.log(loggedUserName,value,imgURL) 
   Firebase.database()
     .ref("posts/" + id)
@@ -49,16 +49,28 @@ export const createPost = (loggedUserName,userID, value, imgURL,category) => {
       username: loggedUserName,
       userID,
       textMsg: value,
-      profile_picture: profilePicture,
+      // profile_picture: profilePicture,
       imageUrl: imgURL,
-      category
+      category,
+      comments : []
+    });
+};
+export const uploadComment = (userID,postID, comment,username) => {
+  console.log(userID, postID, comment)
+  Firebase.database()
+    .ref("posts/")
+    .child(postID+"/comments")
+    .push({
+      userID,
+      comment,
+      username
     });
 };
 
 export const updateProfileImg = (userID,imgBase64) => {
   var id = Math.floor(Math.random() * 100) + 1;
   id = id.toString();
-  
+  console.log("updateProfileImg",userID)
   var additional_info = Firebase.database().ref("/additional_info");
   additional_info.once("value").then((snapshot) => {
     const data = snapshot.val();
