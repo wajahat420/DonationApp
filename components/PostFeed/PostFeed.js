@@ -39,27 +39,28 @@ const PostFeed = (props) => {
       const data = snapshot.val();
       myData = []
       if(data != null){
-        var myData = Object.keys(data).map((key) => {
+        var myData = Object.keys(data).map(key => {
           let obj = data[key]
-          obj["postID"] = key
+          obj["postID"] = key 
           return obj;
         });
       }
       
-      setPosts(myData.slice(0,myData.length-1));
+      setPosts(myData);
     });
 
     Firebase.auth().onAuthStateChanged(function (user) {
       if (user) {
         setUserID(user.uid);
         setLoggedUserName(user.displayName);
-        console.log("postfeed",user.uid)
+        // console.log("postfeed",user.uid)
       } 
     });
   }, []);
 
   const getAllPosts = posts.map((data) => {
     const comments = data.comments === undefined ? {} : data.comments 
+    let profilePicture = null
     return (
       <>
         <View
@@ -137,19 +138,20 @@ const PostFeed = (props) => {
             </TouchableOpacity>
           </View>
           {Object.keys(comments).map(key=>{
-           const commentObj = comments[key]
-            let profilePicture
+           const commentObj = comments[key]           
             const username = commentObj.username
             var additional_info = Firebase.database().ref("/additional_info");
             additional_info.once("value").then((snapshot) => {
               const data = snapshot.val();
-              console.log("working")
+              console.log("working") 
               Object.keys(data).forEach(elem=>{ 
-                console.log("datata",data[elem].userID , commentObj.userID)
-                  profilePicture = data[elem].userID == commentObj.userID && data[elem].profile_picture  
+                if(data[elem].userID == commentObj.userID){
+                  console.log("inside")
+                  profilePicture = data[elem].profile_picture
+                }
               })
             })
-            console.log(profilePicture)
+            console.log("profile_picture",profilePicture)
             return(
               <View>
                 <View style={{ flexDirection: "row" }}>
