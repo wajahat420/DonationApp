@@ -17,16 +17,11 @@ const CreatePost = (props) => {
 
   useEffect(() => {
     Firebase.auth().onAuthStateChanged(function (user) {
-      // console.log("user =>", user)
-      // console.log(user.photoURL)
+
       if (user) {
-        // console.log(user.displayName, user.uid);
         setLoggedUserName(user.displayName);
         setUserID(user.uid);
-      } else {
-        // User is signed out.
-        // ...
-      }
+      } 
     });
   });
   const createTwoButtonAlert = () =>

@@ -3,6 +3,7 @@ import { View, Text,StyleSheet,Image, TouchableOpacity } from 'react-native'
 import Feather from "react-native-vector-icons/Feather"
 import * as ImagePicker from 'expo-image-picker';
 import { updateProfileImg } from "../../utils/Auth/Auth.service"
+import Firebase from '../../config/Firebase';
 
 
 export default function imageData(props) {
@@ -11,7 +12,17 @@ export default function imageData(props) {
       if(props.profile_picture !== "" && image === ""){
             setImage(props.profile_picture)
       }
-      
+      var storageRef = Firebase.storage().ref();
+      // var spaceRef = storageRef.child('cover.png');
+      storageRef.child('cover.png').getDownloadURL().then(function(url) {
+            // var test = url;
+            console.log("url",url);
+            setImage(url)
+            // document.querySelector('img').src = test;
+
+      }).catch(function(error) {
+
+      });
       useEffect(() => {
           
             (async () => {
@@ -37,13 +48,13 @@ export default function imageData(props) {
       
             if (!result.cancelled) {
                   setImage(result.base64);
-                  updateProfileImg(props.userID,result.base64)
+                  // updateProfileImg(props.userID,result.base64)
             }
       };
       return (
                   <View style={styles.profileImg}>
                         <Image 
-                              source={{uri:`data:image/png;base64,${image}`}}  
+                              source={{uri:image}}  
                               style={{width: 120, height: 120, borderRadius: 200/ 2, borderWidth:1 , borderColor:"gray"}} 
                         />
       
@@ -52,9 +63,9 @@ export default function imageData(props) {
                                     <Feather style={{padding:6,backgroundColor:"gray",borderRadius:20,marginRight:0,color:"white"}} name="camera" size={15} />
                               </TouchableOpacity>
                         </View>
-                        <View style = {{marginLeft:38,position:"relative",top:-20}}> 
-                              <Text style ={{color: 'gray'}}>Aun Jafri</Text>
-                              <Text style = {{fontSize:11 , marginLeft : 5,color:'gray'}}>@aunjafri</Text>
+                        <View style = {{marginLeft:0,position:"relative",top:-20}}> 
+                              <Text style ={{color: 'gray',textAlign:"center"}}>{props.username}</Text>
+                              {/* <Text style = {{fontSize:11 , marginLeft : 5,color:'gray'}}>@aunjafri</Text> */}
                         </View>
                   </View>
       )

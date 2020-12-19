@@ -39,9 +39,9 @@ const PostFeed = (props) => {
       const data = snapshot.val();
       myData = []
       if(data != null){
-        var myData = Object.keys(data).map(key => {
+        var myData = Object.keys(data).map((key) => {
           let obj = data[key]
-          obj["postID"] = key 
+          obj["postID"] = key
           return obj;
         });
       }
@@ -53,17 +53,17 @@ const PostFeed = (props) => {
       if (user) {
         setUserID(user.uid);
         setLoggedUserName(user.displayName);
-        // console.log("postfeed",user.uid)
+        console.log("postfeed",user.uid)
       } 
     });
   }, []);
-
-  const getAllPosts = posts.map((data) => {
+  console.log("posts",posts)
+  const getAllPosts = posts.map((data,key) => {
     const comments = data.comments === undefined ? {} : data.comments 
-    let profilePicture = null
     return (
       <>
         <View
+          key = {key}
           style={{
             borderColor: "#e6e6e6",
             paddingLeft: 20,
@@ -138,31 +138,20 @@ const PostFeed = (props) => {
             </TouchableOpacity>
           </View>
           {Object.keys(comments).map(key=>{
-           const commentObj = comments[key]           
-            const username = commentObj.username
-            var additional_info = Firebase.database().ref("/additional_info");
-            additional_info.once("value").then((snapshot) => {
-              const data = snapshot.val();
-              console.log("working") 
-              Object.keys(data).forEach(elem=>{ 
-                if(data[elem].userID == commentObj.userID){
-                  console.log("inside")
-                  profilePicture = data[elem].profile_picture
-                }
-              })
-            })
-            console.log("profile_picture",profilePicture)
+           const commentObj = comments[key]
+            let profilePicture = null
+
             return(
-              <View>
+              <View style={{
+                // borderWidth:1,
+                // borderColor:"gray",
+                // borderRadius:10
+              }}>
                 <View style={{ flexDirection: "row" }}>
                   <Avatar
                     rounded
                     size={25}
                     source={{uri:`data:image/png;base64,${profilePicture}`}}  
-
-                    // source={{
-                    //   uri: "https://i.postimg.cc/jS8fpDp4/default-avatar.jpg",
-                    // }}
                   /> 
                   <Text
                     style={{
@@ -173,9 +162,10 @@ const PostFeed = (props) => {
                       paddingBottom: 5,
                     }}
                   >
-                    {username}
+                    {commentObj.username}
                   </Text>
-              </View>
+                </View>
+                <Text style={{ color: "#787878" }}>{commentObj.comment}</Text>
               </View>
             )
           })}
@@ -188,7 +178,19 @@ const PostFeed = (props) => {
                   type="evilicon"
                   color="#737373"
                   size={25}
-                  onPress ={()=>uploadComment(userID,data.postID,comment,loggedUserName)}
+                  onPress ={()=>{
+                    uploadComment(userID,data.postID,comment,loggedUserName)
+                    window.location.reload(false)
+                    // console.log("below",posts[key].comments)
+                    // let posts = [...posts]
+                    // posts[key].comments.push({
+                    //   userID,
+                    //   postID: data.postID,
+                    //   comment,
+                    //   username : loggedUserName       
+                    // })
+                    // setPosts(posts)
+                  }}
                 />
               }
               style={{ fontSize: 13 }}

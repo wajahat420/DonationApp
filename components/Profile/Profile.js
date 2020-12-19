@@ -26,6 +26,7 @@ export default class Profile extends Component {
   state = {
     selectedIndex : 2,
     userID : "",
+    username : "",
     showLogout : false,
     additional_info : {
       profile_picture : "",
@@ -41,14 +42,15 @@ export default class Profile extends Component {
   
   componentDidMount(){
     let userID = ""
+    let username = ""
     Firebase.auth().onAuthStateChanged(function (user) {
       if (user) {
         userID = user.uid
-        // this.setState({userID : user.uid})
+        username = user.displayName
       } 
     });
   
-    
+    console.log("id",userID)
     var additional_info = Firebase.database().ref("/additional_info");
     additional_info.once("value").then((snapshot) => {
       const data = snapshot.val();
@@ -56,19 +58,23 @@ export default class Profile extends Component {
 
       Object.keys(data).forEach(elem=>{
         if(data[elem].userID == userID){
-          
-          obj["profile_picture"] = data[elem].profile_picture
-          obj["cover_picture"] = data[elem].cover_picture 
+          // var storageRef = Firebase.storage().ref();
+          // storageRef.child('cover.png').getDownloadURL().then(function(url) {
+          //       console.log("url",url);
+          //       setImage(url)
+          // })
+          // obj["profile_picture"] = data[elem].profile_picture
+          // obj["cover_picture"] = data[elem].cover_picture 
         }
       })
-      this.setState({additional_info: obj, userID})
+      this.setState({additional_info: obj, 
+        userID,
+        username
+      })
     });
   }
   render() {
-    let logout = null
-    if(this.state.showLogout){
-
-      logout = 
+    let logout = this.state.showLogout  &&
 
       <View style={{ position : "absolute",top :50,    }}>
         <TouchableOpacity onPress={()=>this.history.navigate("Login")}>
@@ -86,7 +92,6 @@ export default class Profile extends Component {
                   </Text>
       </TouchableOpacity>
               </View>
-    }
     return (
       <>
         <View style={styles.container2}>
@@ -105,6 +110,7 @@ export default class Profile extends Component {
                 />
                 <ProfileImageData
                   userID = {this.state.userID}
+                  username = {this.state.username}
                   profile_picture = {this.state.additional_info["profile_picture"]}
                 />
                 <View style={styles.follow}>
