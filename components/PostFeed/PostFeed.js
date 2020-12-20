@@ -25,7 +25,7 @@ const PostFeed = (props) => {
   const [comment, setComment] = useState("")
   const [userID, setUserID] = useState("")
   const [loggedUserName,setLoggedUserName] = useState("")
-
+  let profilePicture = ""
   const updateIndex = (selectedIndex) => {
     setSelectedIndex(selectedIndex);
     selectedIndex == 1 ? props.navigation.navigate("FollowingGroup") : null;
@@ -44,11 +44,8 @@ const PostFeed = (props) => {
           return obj;
         });
       }
-      
       setPosts(myData);
     });
-    var additional_info = Firebase.database().ref("/additional_info");
-
 
     Firebase.auth().onAuthStateChanged(function (user) {
       if (user) {
@@ -57,175 +54,165 @@ const PostFeed = (props) => {
       } 
     });
   }, []);
-   getProfileAndCoverURL = async(obj)=>{
-    let profile_picture = ""
-    var storageRef = Firebase.storage().ref();
-
-    await storageRef.child('profile_pictures/'+obj.profile_picture).getDownloadURL().then(function(url) {
-          profile_picture = url
-    })
-    // await storageRef.child('cover_pictures/'+obj.cover_picture).getDownloadURL().then(function(url) {
-    //   cover_picture = url
-    // })
-    return profile_picture
-  }
+  const getProfileAndCoverURL = async(obj)=>{
+      await Firebase.storage().ref().child('profile_pictures/'+obj.profile_picture).getDownloadURL().then(function(url) {
+        profilePicture = url
+        console.log("url",profilePicture)
+      })
+    }
   const additional_info = async(id)=>{
-    let profile_picture = ""
-    Firebase.database().ref("/additional_info").once("value").then((snapshot) => {
+
+    await Firebase.database().ref("/additional_info").once("value").then((snapshot) => {
       const data = snapshot.val();  
 
       Object.keys(data).forEach(elem=>{
-        if(data[elem].userID == id){
-          profile_picture =  getProfileAndCoverURL(data[elem])
-          console.log("profile",profile_picture)
-
+        if(data[elem].userID == id && data[elem].profile_picture !== ""){
+          getProfileAndCoverURL(data[elem])
         }
       })
     });
-    console.log("url",profile_picture)
-    return profile_picture
   }
 
-  const getAllPosts = posts.map((data,key) => {
+    const getAllPosts =  posts.map( (data,key) => {
     const comments = data.comments === undefined ? {} : data.comments 
-    const profile_picture =  ""
-    // const profile_picture = additional_info(data.userID)
-    // console.log("check",profile_picture)
-    return (
-      <>
-        <View
-          key = {key}
-          style={{
-            borderColor: "#e6e6e6",
-            paddingLeft: 20,
-            marginTop: 10,
-          }}
-        >
-          <View>
-            <View style={{ flexDirection: "row" }}>
-              <Avatar
-                rounded
-                size={25}
-                source={{
-                  uri: profile_picture,
-                }}
-              />
-              <Text
+      // console.log("before",profilePicture) 
+      // await additional_info(data.userID)
+
+      // console.log("after",profilePicture)
+       return (      
+            <>
+              <View
+                key = {key}
                 style={{
-                  color: "#268c77",
-                  fontSize: 15,
-                  fontWeight: "bold",
-                  marginLeft: 5,
-                  paddingBottom: 5,
+                  borderColor: "#e6e6e6",
+                  paddingLeft: 20,
+                  marginTop: 10,
                 }}
               >
-                {data.username}
-              </Text>
-            </View>
-          </View>
-
-          <Text style={{ color: "#787878" }}>{data.textMsg}</Text>
-          <View style={{ flexDirection: "row", marginTop: 10 }}>
-            <TouchableOpacity
-              onPress={() => {
-                // props.navigation.navigate("");
-              }}
-              style={{ marginLeft: 1, paddingBottom: 5 }}
-            >
-              <Image
-                style={{ width: 15, height: 15, marginRight: 10 }}
-                source={{
-                  uri:
-                    "https://i.postimg.cc/kXGpQtm3/206-2066210-thumb-up-icon-color-thumbs-up-like-icon-png.jpg",
-                }}
-              />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => {
-                // props.navigation.navigate("");
-              }}
-              style={{ marginLeft: 1 }}
-            >
-              <Image
-                style={{ width: 15, height: 15, marginRight: 10 }}
-                source={{
-                  uri: profile_picture,
-                }}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                // props.navigation.navigate("");
-              }}
-              style={{ marginLeft: 1 }}
-            >
-              <Image
-                style={{ width: 15, height: 15, marginRight: 10 }}
-                source={{
-                  uri: "https://i.postimg.cc/63Qq0NfQ/242127.png",
-                }}
-              />
-            </TouchableOpacity>
-          </View>
-          {Object.keys(comments).map(key=>{
-           const commentObj = comments[key]
-            let profilePicture = null
-
-            return(
-              <View style={{
-                // borderWidth:1,
-                // borderColor:"gray",
-                // borderRadius:10
-              }}>
-                <View style={{ flexDirection: "row" }}>
-                  <Avatar
-                    rounded
-                    size={25}
-                    source={{uri:`data:image/png;base64,${profilePicture}`}}  
-                  /> 
-                  <Text
-                    style={{
-                      color: "#268c77",
-                      fontSize: 15,
-                      fontWeight: "bold",
-                      marginLeft: 5,
-                      paddingBottom: 5,
-                    }}
-                  >
-                    {commentObj.username}
-                  </Text>
+                <View>
+                  <View style={{ flexDirection: "row" }}>
+                    <Avatar
+                      rounded
+                      size={25}
+                      source={{
+                        uri: profilePicture,
+                      }}
+                    />
+                    <Text
+                      style={{
+                        color: "#268c77",
+                        fontSize: 15,
+                        fontWeight: "bold",
+                        marginLeft: 5,
+                        paddingBottom: 5,
+                      }}
+                    >
+                      {data.username}
+                    </Text>
+                  </View>
                 </View>
-                <Text style={{ color: "#787878" }}>{commentObj.comment}</Text>
+    
+                <Text style={{ color: "#787878" }}>{data.textMsg}</Text>
+                <View style={{ flexDirection: "row", marginTop: 10 }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      // props.navigation.navigate("");
+                    }}
+                    style={{ marginLeft: 1, paddingBottom: 5 }}
+                  >
+                    <Image
+                      style={{ width: 15, height: 15, marginRight: 10 }}
+                      source={{
+                        uri:
+                          "https://i.postimg.cc/kXGpQtm3/206-2066210-thumb-up-icon-color-thumbs-up-like-icon-png.jpg",
+                      }}
+                    />
+                  </TouchableOpacity>
+    
+                  <TouchableOpacity
+                    onPress={() => {
+                      // props.navigation.navigate("");
+                    }}
+                    style={{ marginLeft: 1 }}
+                  >
+                    <Image
+                      style={{ width: 15, height: 15, marginRight: 10 }}
+                      source={{
+                        uri: profilePicture,
+                      }}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      // props.navigation.navigate("");
+                    }}
+                    style={{ marginLeft: 1 }}
+                  >
+                    <Image
+                      style={{ width: 15, height: 15, marginRight: 10 }}
+                      source={{
+                        uri: "https://i.postimg.cc/63Qq0NfQ/242127.png",
+                      }}
+                    />
+                  </TouchableOpacity>
+                </View>
+                {Object.keys(comments).map(key=>{
+                const commentObj = comments[key]
+    
+                  return(
+                    <View style={{
+                      // borderWidth:1,
+                      // borderColor:"gray",
+                      // borderRadius:10
+                    }}>
+                      <View style={{ flexDirection: "row" }}>
+                        <Avatar
+                          rounded
+                          size={25}
+                          source={{uri:`data:image/png;base64,${profilePicture}`}}  
+                        /> 
+                        <Text
+                          style={{
+                            color: "#268c77",
+                            fontSize: 15,
+                            fontWeight: "bold",
+                            marginLeft: 5,
+                            paddingBottom: 5,
+                          }}
+                        >
+                          {commentObj.username}
+                        </Text>
+                      </View>
+                      <Text style={{ color: "#787878" }}>{commentObj.comment}</Text>
+                    </View>
+                  )
+                })}
+                <View style={{ width: 330, position: "relative", right: 10 }}>
+                  <Input
+                    placeholder="Comment"
+                    leftIcon={
+                      <Icon
+                        name="comment"
+                        type="evilicon"
+                        color="#737373"
+                        size={25}
+                        onPress ={()=>{
+                          uploadComment(userID,data.postID,comment,loggedUserName)
+                          window.location.reload(false)
+                          
+                        }}
+                      />
+                    }
+                    style={{ fontSize: 13 }}
+    
+                    onChangeText={(value) => setComment(value)}
+                  />
+                </View>
               </View>
-            )
-          })}
-          <View style={{ width: 330, position: "relative", right: 10 }}>
-            <Input
-              placeholder="Comment"
-              leftIcon={
-                <Icon
-                  name="comment"
-                  type="evilicon"
-                  color="#737373"
-                  size={25}
-                  onPress ={()=>{
-                    uploadComment(userID,data.postID,comment,loggedUserName)
-                    window.location.reload(false)
-                    
-                  }}
-                />
-              }
-              style={{ fontSize: 13 }}
-
-              onChangeText={(value) => setComment(value)}
-            />
-          </View>
-        </View>
-      </>
-    );
-  });
-
+            </>
+       )
+    })
+            
   const LeftIcon = () => {
     return (
       <View style={{ flexDirection: "row" }}>
@@ -261,7 +248,6 @@ const PostFeed = (props) => {
     );
   };
   const history = props.navigation;
-  // console.log("POSTS", posts);
 
   return (
     <>

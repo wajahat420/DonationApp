@@ -8,6 +8,7 @@ import ProfileImageData from "./profileImageData"
 import CoverImageData from "./coverImageData"
 import AddBio from "./addBio";
 import Firebase from "../../config/Firebase";
+import { Dimensions } from 'react-native';
 
 
 
@@ -15,6 +16,8 @@ export default class Profile extends Component {
 
   constructor({navigation}){
     super()
+    this.windowWidth = Dimensions.get('window').width;
+
     this.history = navigation
     this.shareOptions =  {
       title: 'App link',
@@ -58,50 +61,68 @@ export default class Profile extends Component {
       cover_picture
     })
   }
-    
-    componentDidMount(){
+    username = async() =>{
       let userID = ""
-      Firebase.auth().onAuthStateChanged(function (user) {
+      let username = ""
+      await Firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
           userID = user.uid
-          this.setState({ 
-            userID : user.uid,
-            username : user.displayName
-          })
+          username = user.displayName
         } 
-      });
-    
+      });   
+      this.setState({userID, username})
+    }
+    componentDidMount(){
+      this.username()
+ 
       var additional_info = Firebase.database().ref("/additional_info");
       additional_info.once("value").then((snapshot) => {
         const data = snapshot.val();  
 
         Object.keys(data).forEach(elem=>{
-          if(data[elem].userID == userID){
+          if(data[elem].userID == this.state.userID){
             this.getProfileAndCoverURL(data[elem])
           }
         })
-
       });
+
   }
   render() {
-    let logout = this.state.showLogout  &&
+    let logout = this.state.showLogout  ?
 
-      <View style={{ position : "absolute",top :50,    }}>
+    <View style={{
+      position : "absolute",
+      bottom : 0,
+      // top : 200,
+      flex :1,
+      width : this.windowWidth,
+      backgroundColor : "#268c77"
+    }}>
         <TouchableOpacity onPress={()=>this.history.navigate("Login")}>
-                  <Text style={{
-                            textAlign : "center",
-                            marginRight : 6,
-                            padding : 3,
-                            width : 60,
-                            borderColor : "gray",
-                            borderWidth : 1,
-                            color : "gray"
-                            }}
-                  >
-                    Logout
-                  </Text>
-      </TouchableOpacity>
-              </View>
+            <Text style={{textAlign : "center",color:"white",padding : 12,fontSize : 20,borderWidth : 1, borderColor : "white"}}>Logout</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={()=>this.setState({showLogout : false})}>
+            <Text style={{textAlign : "center",color:"white",padding : 12,fontSize : 20,borderWidth : 1, borderColor : "white"}}>Cancle</Text>
+        </TouchableOpacity>
+    </View>
+    : <View></View>
+
+      // <View style={{ position : "absolute",top :50,    }}>
+      //   <TouchableOpacity onPress={()=>this.history.navigate("Login")}>
+      //             <Text style={{
+      //                       textAlign : "center",
+      //                       marginRight : 6,
+      //                       padding : 3,
+      //                       width : 60,
+      //                       borderColor : "gray",
+      //                       borderWidth : 1,
+      //                       color : "gray"
+      //                       }}
+      //             >
+      //               Logout
+      //             </Text>
+      // </TouchableOpacity>
+      // </View>
     return (
       <>
         <View style={styles.container2}>
@@ -128,7 +149,6 @@ export default class Profile extends Component {
                         <Entypo  name="dots-three-vertical" size={25} color="#268c77"/>
                     </TouchableOpacity>
                   </View>
-                    {logout}
                   <View style={styles.profileDetail}>
                     <TouchableOpacity onPress={()=>Share.share(this.shareOptions)}>
                       <AntDesign  name="sharealt" size={25} color="#268c77"/>
@@ -156,46 +176,9 @@ export default class Profile extends Component {
                       
                 />
                 </View>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <View style={{flex: 1, height: 1, backgroundColor: 'gray'}} />
-                        <View>
-                            <Text style={{width: 130, textAlign: 'center',letterSpacing:2,color:'gray'}}>YOUR CAUZE</Text>
-                      </View>
-                <View style={{flex: 1, height: 1, backgroundColor: 'gray'}} />
-               </View>
-                  <View style = {styles.Edit}>
-                    <TouchableOpacity>
-                    
-                      <Text style = {{textAlign : "right" , padding : 6, fontSize : 15, color:'gray'}} >edit</Text>
-                    </TouchableOpacity>
-                  </View>
-                  <TouchableOpacity>
-                  <View style = {styles.AddACauze}>
-                    <Text style = {{textAlign : 'center' , fontSize : 18, color:'gray'}}>+</Text>
-                    
-                  </View>
-                  </TouchableOpacity>
-                  <View style = {styles.ButtonAddCauze}>
-                    <TouchableOpacity>
-                    <Text style = {{fontSize:11 , fontWeight:'bold',color:'gray'}}> + Add a Cauze</Text>
-                    </TouchableOpacity>
-                    </View>
-                   
-  
-                    <View style={{flexDirection: 'row', alignItems: 'center' , marginTop:13}}>
-                      <View style={{flex: 0.5, height: 1, backgroundColor: 'gray'}} />
-                        <View style = {styles.NonProfit}>
-                            <Text style={{width: 270, textAlign: 'center', letterSpacing: 2,color:'gray'}}>YOUR FAVOURITE NONPROFITS</Text>
-                      </View>
-                      <View style={{flex: 0.5, height: 1, backgroundColor: 'gray'}} />
-                    </View>
-                    <TouchableOpacity>
-                    <View style = {styles.LocalProfit}>
-                    <Text style = {{textAlign : 'center' , fontSize : 18 ,color:'gray'}}>+</Text>
-                    
-                  </View>
-                  </TouchableOpacity>
           </ScrollView>
+
+          {logout}
         </View>
       </>
     );

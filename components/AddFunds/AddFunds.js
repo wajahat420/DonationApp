@@ -10,10 +10,20 @@ import {
 import { Header } from "react-native-elements";
 import { Switch } from "react-native";
 import { Icon } from "react-native-elements";
+import { Dimensions } from 'react-native';
+import { Alert } from "react-native";
+
 // import { Button } from "react-native-elements";
 // import { Switch } from "react-native-gesture-handler";
 class AddFunds extends React.Component {
+  state = {
+    showPaymentMethod : false,
+    showCreditCardNo : false,
+    amount : 0,
+    creditCardNo : ""
+  }
   render() {
+    const windowWidth = Dimensions.get('window').width;
     const LogoIcon = () => {
       return (
         <TouchableOpacity
@@ -47,104 +57,118 @@ class AddFunds extends React.Component {
       )
     }
 
-    const righticon = () => {
-      return <Switch></Switch>;
-    };
+    let showCreditCardNo = this.state.showCreditCardNo ?
+    
+       <View style={{width:windowWidth,alignItems:"center",top: 150,position : "absolute",display : "flex"}}>
+        <TextInput onChangeText={value=>{
+            if(value.length !== 0 && value.length < 17){
+              const ascii =  value[value.length-1].charCodeAt()
+              if(ascii >= 48 && ascii <= 57){
+                this.setState({creditCardNo : value})
+              }
+            }
+          }} 
+        placeholder="xxxx-xxxx-xxxx-xxxx"
+        style={styles.creditCard} 
+        value={this.state.creditCardNo}
+        />
+        <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              if(this.state.creditCardNo == 16){
+                Alert.alert("Successfully added your fund.")
+              }else{
+                Alert.alert("kindly check your number")
+              }
+              // this.setState({showPaymentMethod : !this.state.showPaymentMethod})
+            }}
+          >
+            <Text style={styles.buttonText}>SUBMIT</Text>
+          </TouchableOpacity>
+      </View> 
+    : <View></View>
+ 
+
+    let showPaymentMethod = this.state.showPaymentMethod &&
+    <View style={{
+      position : "absolute",
+      bottom : 0,
+      flex :1,
+      width : windowWidth,
+      backgroundColor : "#268c77"
+    }}>
+        <TouchableOpacity onPress={()=>this.setState({showCreditCardNo : !this.state.showCreditCardNo})}>
+            <Text style={{textAlign : "center",color:"white",padding : 12,fontSize : 20,borderWidth : 1, borderColor : "white"}}>Paypel</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={()=>this.setState({showCreditCardNo : !this.state.showCreditCardNo})}>
+            <Text style={{textAlign : "center",color:"white",padding : 12,fontSize : 20,borderWidth : 1, borderColor : "white"}}>Credit Card</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={()=>this.setState({showPaymentMethod : false})}>
+            <Text style={{textAlign : "center",color:"white",padding : 12,fontSize : 20,borderWidth : 1, borderColor : "white"}}>Cancle</Text>
+        </TouchableOpacity>
+    </View>
+  
     return (
       <>
-        <Header
-          style={styles.Header}
-          leftComponent={()=>LeftIcon()}
-          centerComponent={{ text: "ADD FUNDS", style: { color: "#fff" } }}
-          rightComponent={{ icon: "user", type: "entypo", color: "#fff" }}
-          containerStyle={{
-            backgroundColor: "#268c77",
-          }}
-        />
 
-        {/* <View style={styles.maincontainer}> */}
-        <View style={styles.balancecontainer}>
           <Header
-            placement="left"
-            leftComponent={() => LogoIcon()}
-            centerComponent={{ text: "Charity App", style: { color: "#000" } }}
+            style={styles.Header}
+            leftComponent={()=>LeftIcon()}
+            centerComponent={{ text: "ADD FUNDS", style: { color: "#fff" } }}
+            rightComponent={{ icon: "user", type: "entypo", color: "#fff" }}
             containerStyle={{
-              backgroundColor: "#fff",
-              justifyContent: "space-around",
-              paddingBottom: 15,
-              height: 65,
+              backgroundColor: "#268c77",
             }}
           />
-          {/* <View>
-    <Image  style={styles.balanceIcon}
-          style={{ width: 35, height: 35 }}
-          source={{
-            uri: "https://i.postimg.cc/tRFv8Ntk/social-activities.png", 
-          }}
-          
-        />
-       <Text style={styles.balance}>   Current balance</Text>
-       </View> */}
+
+          <View style={styles.balancecontainer}>
+            <Header
+              placement="left"
+              leftComponent={() => LogoIcon()}
+              centerComponent={{ text: "Charity App", style: { color: "#000" } }}
+              containerStyle={{
+                backgroundColor: "#fff",
+                justifyContent: "space-around",
+                paddingBottom: 15,
+                height: 65,
+              }}
+            />
+        
+          </View>
+
+        <View style={[styles.input,{display : this.state.showCreditCardNo ? "none" : "flex"}]}>
+            <Text style={styles.Text1}>Enter Amount</Text>
+            <Text style={styles.Fontsize}>
+              $
+            </Text>
+            <TextInput onChangeText={value=>{
+                    if(value.length !== 0){
+                      const ascii =  value[value.length-1].charCodeAt()
+                      if(ascii >= 48 && ascii <= 57){
+                        this.setState({amount : value})
+                      }
+                    }
+                  }}
+                  value={this.state.amount}
+                  style={styles.inputbox} 
+
+                      // placeholder="xxxx-xxxx-xxxx-xxxx"
+                      placeholderTextColor="black"
+            />
         </View>
-
-        {/* <TextInput style={styles.input} */}
-
-        <View style={styles.input}>
-          <Text style={styles.Text1}>Enter Amount</Text>
-          <Text style={styles.Fontsize}>
-            $
-            <TextInput style={styles.inputbox} />
-          </Text>
-        </View>
-
-        {/* <View>
-  <Text>Fund Monthly</Text>
-</View> */}
-        {/* <View>
-<Button style={styles.Button}
-  title="Outline button"
-  type="outline"
-/>
-</View> */}
-
-        <View>
-          <Header
-            placement="left"
-            rightComponent={() => righticon()}
-            centerComponent={{
-              text: "Fund Monthly",
-              style: { color: "#000", fontWeight: "bold" },
-            }}
-            containerStyle={{
-              backgroundColor: "#fff",
-              justifyContent: "space-around",
-              paddingBottom: 15,
-              height: 65,
-            }}
-          />
-          <View style={styles.touchbutton}>
+        <View style={[styles.touchbutton,{display : this.state.showCreditCardNo ? "none" : "flex"}]}>
             <TouchableOpacity
               style={styles.button}
               onPress={() => {
                 this.props.navigation.navigate("AddFunds");
+                this.setState({showPaymentMethod : !this.state.showPaymentMethod})
               }}
             >
               <Text style={styles.buttonText}>CONFIRM</Text>
             </TouchableOpacity>
-          </View>
-
-          {/* <Header style={styles.Header1}
-       placement="left"
-      leftComponent={{ text: "Fund Monthly", style: { color: 'black', fontSize: 25, fontWeight: "bold" } }}
-     rightComponent={{ icon: 'switch', color: 'black'}}
-    
-      containerStyle={{
-        backgroundColor: 'green',
-       height: 110,
-          }}
-          />
-    <Switch/> */}
         </View>
+        {showCreditCardNo}
+        {showPaymentMethod}
       </>
     );
   }
@@ -240,17 +264,26 @@ const styles = StyleSheet.create({
     borderColor: "black",
     borderWidth: 1,
     padding: 16,
-    // paddingTop: 16,
-    // paddingBottom: 16,
-    // paddingLeft: 60,
-    // paddingRight: 60,
     textAlign: "center",
     margin: 10,
     backgroundColor: "white",
     fontSize: 26,
     borderRadius: 5,
     paddingVertical: 10,
+    width : 200
   },
+  creditCard : {
+    borderColor: "black",
+    borderWidth: 1,
+    padding: 16,
+    textAlign: "center",
+    margin: 10,
+    backgroundColor: "white",
+    fontSize: 20,
+    borderRadius: 5,
+    paddingVertical: 5,
+    width : 280
+  }
 });
 
 export default AddFunds;

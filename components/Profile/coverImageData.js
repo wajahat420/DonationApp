@@ -2,14 +2,14 @@ import React,{useState,useEffect} from 'react'
 import { View, Text,StyleSheet,Image, TouchableOpacity } from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
 import { updateCoverImg } from "../../utils/Auth/Auth.service"
-
+import Firebase from "../../config/Firebase"
 
 export default function imageData(props) {
       const [image,setImage] = useState("")
 
-      useEffect(() => {
+      if(props.cover_picture !== "" && image === ""){
             setImage(props.cover_picture)
-      }, []);
+      }
             
       const pickImage = async () => {
             let result = await ImagePicker.launchImageLibraryAsync({
@@ -25,11 +25,12 @@ export default function imageData(props) {
                   console.log("filename",result)
                   const response = await fetch(result.uri)
                   const blob = await response.blob()
+                  setImage(result.uri);
 
                   Firebase.storage().ref("cover_pictures/"+filename).put(blob)
                   .then(snapshot => snapshot.ref.getDownloadURL())
                   .then(url => { 
-                        setImage(result.uri);
+                        // setImage(result.uri);
                   })
                   updateCoverImg(props.userID,filename)
 
@@ -40,7 +41,7 @@ export default function imageData(props) {
             <View style={styles.addImg}>
                   <Image 
                         resizeMode={'contain'}
-                        source={{uri:`data:image/png;base64,${image}`}}  
+                        source={{uri:image}}  
                         style={{width:"100%",top:0,height:200,resizeMode: 'stretch',position:"absolute"}} 
                   />                  
                    <TouchableOpacity onPress={pickImage}>

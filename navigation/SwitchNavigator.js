@@ -45,7 +45,7 @@ const SwitchNavigator = createSwitchNavigator(
     },
   },
   {
-    initialRouteName: "Login",
+    initialRouteName: "PostFeed",
   }
 );
 
