@@ -13,7 +13,6 @@ import {
   Icon,
   Input,
   Image,
-  Button,
   Avatar,
 } from "react-native-elements";
 import MainCarousel from "../Carousel/Carousel";
@@ -37,9 +36,9 @@ const PostFeed = (props) => {
     var postFeeds = Firebase.database().ref("/posts");
     postFeeds.once("value").then((snapshot) => {
       const data = snapshot.val();
-      myData = []
+      var myData = []
       if(data != null){
-        var myData = Object.keys(data).map((key) => {
+        myData = Object.keys(data).map((key) => {
           let obj = data[key]
           obj["postID"] = key
           return obj;
@@ -48,18 +47,50 @@ const PostFeed = (props) => {
       
       setPosts(myData);
     });
+    var additional_info = Firebase.database().ref("/additional_info");
+
 
     Firebase.auth().onAuthStateChanged(function (user) {
       if (user) {
         setUserID(user.uid);
         setLoggedUserName(user.displayName);
-        console.log("postfeed",user.uid)
       } 
     });
   }, []);
-  console.log("posts",posts)
+   getProfileAndCoverURL = async(obj)=>{
+    let profile_picture = ""
+    var storageRef = Firebase.storage().ref();
+
+    await storageRef.child('profile_pictures/'+obj.profile_picture).getDownloadURL().then(function(url) {
+          profile_picture = url
+    })
+    // await storageRef.child('cover_pictures/'+obj.cover_picture).getDownloadURL().then(function(url) {
+    //   cover_picture = url
+    // })
+    return profile_picture
+  }
+  const additional_info = async(id)=>{
+    let profile_picture = ""
+    Firebase.database().ref("/additional_info").once("value").then((snapshot) => {
+      const data = snapshot.val();  
+
+      Object.keys(data).forEach(elem=>{
+        if(data[elem].userID == id){
+          profile_picture =  getProfileAndCoverURL(data[elem])
+          console.log("profile",profile_picture)
+
+        }
+      })
+    });
+    console.log("url",profile_picture)
+    return profile_picture
+  }
+
   const getAllPosts = posts.map((data,key) => {
     const comments = data.comments === undefined ? {} : data.comments 
+    const profile_picture =  ""
+    // const profile_picture = additional_info(data.userID)
+    // console.log("check",profile_picture)
     return (
       <>
         <View
@@ -76,7 +107,7 @@ const PostFeed = (props) => {
                 rounded
                 size={25}
                 source={{
-                  uri: "https://i.postimg.cc/jS8fpDp4/default-avatar.jpg",
+                  uri: profile_picture,
                 }}
               />
               <Text
@@ -119,7 +150,7 @@ const PostFeed = (props) => {
               <Image
                 style={{ width: 15, height: 15, marginRight: 10 }}
                 source={{
-                  uri: "https://i.postimg.cc/BQtqwgFm/supporticon.jpg",
+                  uri: profile_picture,
                 }}
               />
             </TouchableOpacity>
@@ -181,15 +212,7 @@ const PostFeed = (props) => {
                   onPress ={()=>{
                     uploadComment(userID,data.postID,comment,loggedUserName)
                     window.location.reload(false)
-                    // console.log("below",posts[key].comments)
-                    // let posts = [...posts]
-                    // posts[key].comments.push({
-                    //   userID,
-                    //   postID: data.postID,
-                    //   comment,
-                    //   username : loggedUserName       
-                    // })
-                    // setPosts(posts)
+                    
                   }}
                 />
               }

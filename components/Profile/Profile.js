@@ -28,10 +28,8 @@ export default class Profile extends Component {
     userID : "",
     username : "",
     showLogout : false,
-    additional_info : {
-      profile_picture : "",
-      cover_picture : "",
-    }
+    profile_picture : "",
+    cover_picture : "",
   }
 
   updateIndex = (selectedIndex) => {
@@ -39,39 +37,51 @@ export default class Profile extends Component {
     selectedIndex == 1 ? this.history.navigate("FollowingGroup") : null;
     selectedIndex == 0 ? this.history.navigate("PostFeed") : null;
   };
-  
-  componentDidMount(){
-    let userID = ""
-    let username = ""
-    Firebase.auth().onAuthStateChanged(function (user) {
-      if (user) {
-        userID = user.uid
-        username = user.displayName
-      } 
-    });
-  
-    console.log("id",userID)
-    var additional_info = Firebase.database().ref("/additional_info");
-    additional_info.once("value").then((snapshot) => {
-      const data = snapshot.val();
-      let obj = {}
+  async getProfileAndCoverURL(obj){
+    let profile_picture = ""
+    let cover_picture = ""
+    var storageRef = Firebase.storage().ref();
 
-      Object.keys(data).forEach(elem=>{
-        if(data[elem].userID == userID){
-          // var storageRef = Firebase.storage().ref();
-          // storageRef.child('cover.png').getDownloadURL().then(function(url) {
-          //       console.log("url",url);
-          //       setImage(url)
-          // })
-          // obj["profile_picture"] = data[elem].profile_picture
-          // obj["cover_picture"] = data[elem].cover_picture 
-        }
+    if (obj.profile_picture !== ""){
+      await storageRef.child('profile_pictures/'+obj.profile_picture).getDownloadURL().then(function(url) {
+            profile_picture = url
+            console.log("url",profile_picture)
       })
-      this.setState({additional_info: obj, 
-        userID,
-        username
+    }
+    if(obj.cover_picture !== ""){
+      await storageRef.child('cover_pictures/'+obj.cover_picture).getDownloadURL().then(function(url) {
+        cover_picture = url
       })
-    });
+    }
+    this.setState({ 
+      profile_picture,
+      cover_picture
+    })
+  }
+    
+    componentDidMount(){
+      let userID = ""
+      Firebase.auth().onAuthStateChanged(function (user) {
+        if (user) {
+          userID = user.uid
+          this.setState({ 
+            userID : user.uid,
+            username : user.displayName
+          })
+        } 
+      });
+    
+      var additional_info = Firebase.database().ref("/additional_info");
+      additional_info.once("value").then((snapshot) => {
+        const data = snapshot.val();  
+
+        Object.keys(data).forEach(elem=>{
+          if(data[elem].userID == userID){
+            this.getProfileAndCoverURL(data[elem])
+          }
+        })
+
+      });
   }
   render() {
     let logout = this.state.showLogout  &&
@@ -105,13 +115,12 @@ export default class Profile extends Component {
   
                 <CoverImageData
                     userID = {this.state.userID}
-                    cover_picture = {this.state.additional_info["cover_picture"]}
-
+                    cover_picture = {this.state.cover_picture}
                 />
                 <ProfileImageData
                   userID = {this.state.userID}
                   username = {this.state.username}
-                  profile_picture = {this.state.additional_info["profile_picture"]}
+                  profile_picture = {this.state.profile_picture}
                 />
                 <View style={styles.follow}>
                   <View style={styles.profileDetail}>

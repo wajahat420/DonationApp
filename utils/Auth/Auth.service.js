@@ -67,15 +67,14 @@ export const uploadComment = (userID,postID, comment,username) => {
     });
 };
 
-export const updateProfileImg = (userID,imgBase64) => {
+export const updateProfileImg = (userID,fileName) => {
   var id = Math.floor(Math.random() * 100) + 1;
   id = id.toString();
-  console.log("updateProfileImg",userID)
+  console.log("updateProfileImg",userID,fileName)
   var additional_info = Firebase.database().ref("/additional_info");
   additional_info.once("value").then((snapshot) => {
     const data = snapshot.val();
     
-    myData = []
     var id_additional_info = null
     if(data != null){
       Object.keys(data).forEach(elem=>{
@@ -85,21 +84,23 @@ export const updateProfileImg = (userID,imgBase64) => {
         }
       })
       if(id_additional_info == null){
+        console.log("if")
         Firebase.database()
         .ref("additional_info/" + id)
         .set({
           userID,
-          profile_picture: imgBase64,
+          profile_picture: fileName,
           cover_picture : "",
           following : 0,
           followers : 0
         });
       }else{
+        console.log("else")
         Firebase.database()
         .ref("additional_info")
         .child(id_additional_info)
         .update({ 
-          profile_picture: imgBase64,
+          profile_picture: fileName,
         });
       }
    
@@ -108,7 +109,7 @@ export const updateProfileImg = (userID,imgBase64) => {
   });
 };
 
-export const updateCoverImg = (userID,imgBase64) => {
+export const updateCoverImg = (userID,fileName) => {
   var id = Math.floor(Math.random() * 100) + 1;
   id = id.toString();
   
@@ -116,7 +117,6 @@ export const updateCoverImg = (userID,imgBase64) => {
   additional_info.once("value").then((snapshot) => {
     const data = snapshot.val();
     
-    myData = []
     var id_additional_info = null
     if(data != null){
       Object.keys(data).forEach(elem=>{
@@ -131,7 +131,7 @@ export const updateCoverImg = (userID,imgBase64) => {
         .set({
           userID,
           profile_picture: "",
-          cover_picture : imgBase64,
+          cover_picture : fileName,
           following : 0,
           followers : 0
         });
@@ -140,7 +140,7 @@ export const updateCoverImg = (userID,imgBase64) => {
         .ref("additional_info")
         .child(id_additional_info)
         .update({
-          cover_picture: imgBase64 ,
+          cover_picture: fileName ,
         });
       }
    

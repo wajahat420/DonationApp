@@ -7,23 +7,13 @@ import { updateCoverImg } from "../../utils/Auth/Auth.service"
 export default function imageData(props) {
       const [image,setImage] = useState("")
 
-      if(props.cover_picture !== "" && image === ""){
-            setImage(props.cover_picture)
-      }
       useEffect(() => {
-            (async () => {
-                  if (Platform.OS !== 'web') {
-                  const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
-                  if (status !== 'granted') {
-                  alert('Sorry, we need camera roll permissions to make this work!');
-                  }
-                  }
-            })();
+            setImage(props.cover_picture)
       }, []);
             
       const pickImage = async () => {
             let result = await ImagePicker.launchImageLibraryAsync({
-                  mediaTypes: ImagePicker.MediaTypeOptions.All,
+                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
                   allowsEditing: true,
                   aspect: [4, 3],
                   base64 : true,
@@ -31,8 +21,17 @@ export default function imageData(props) {
             });
       
             if (!result.cancelled) {
-                  setImage(result.base64);
-                  updateCoverImg(props.userID,result.base64)
+                  const filename = result.uri.substring(result.uri.lastIndexOf('/') + 1);
+                  console.log("filename",result)
+                  const response = await fetch(result.uri)
+                  const blob = await response.blob()
+
+                  Firebase.storage().ref("cover_pictures/"+filename).put(blob)
+                  .then(snapshot => snapshot.ref.getDownloadURL())
+                  .then(url => { 
+                        setImage(result.uri);
+                  })
+                  updateCoverImg(props.userID,filename)
 
             }
       };

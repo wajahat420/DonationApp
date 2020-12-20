@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react'
-import { View, Text,StyleSheet,Image, TouchableOpacity } from 'react-native'
+import { View, Text,StyleSheet,Image, TouchableOpacity ,Alert} from 'react-native'
 import Feather from "react-native-vector-icons/Feather"
 import * as ImagePicker from 'expo-image-picker';
 import { updateProfileImg } from "../../utils/Auth/Auth.service"
@@ -12,48 +12,35 @@ export default function imageData(props) {
       if(props.profile_picture !== "" && image === ""){
             setImage(props.profile_picture)
       }
-      var storageRef = Firebase.storage().ref();
-      // var spaceRef = storageRef.child('cover.png');
-      storageRef.child('cover.png').getDownloadURL().then(function(url) {
-            // var test = url;
-            console.log("url",url);
-            setImage(url)
-            // document.querySelector('img').src = test;
 
-      }).catch(function(error) {
-
-      });
-      useEffect(() => {
-          
-            (async () => {
-                  if (Platform.OS !== 'web') {
-                  const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
-                  if (status !== 'granted') {
-                  alert('Sorry, we need camera roll permissions to make this work!');
-                  }
-                  }
-            })();
-      }, []);
-            
       const pickImage = async () => {
             let result = await ImagePicker.launchImageLibraryAsync({
-                  mediaTypes: ImagePicker.MediaTypeOptions.All,
+                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
                   allowsEditing: true,
                   aspect: [4, 3],
-                  base64 : true,
                   quality: 1,
             });
-      
-            
-      
+         
             if (!result.cancelled) {
-                  setImage(result.base64);
-                  // updateProfileImg(props.userID,result.base64)
+                  
+                  const filename = result.uri.substring(result.uri.lastIndexOf('/') + 1);
+                  console.log("filename",result)
+                  const response = await fetch(result.uri)
+                  const blob = await response.blob()
+
+                  Firebase.storage().ref("profile_pictures/"+filename).put(blob)
+                  .then(snapshot => snapshot.ref.getDownloadURL())
+                  .then(url => { 
+                        setImage(result.uri);
+
+                  })
+                  updateProfileImg(props.userID,filename)
             }
       };
+      console.log("image",image)
       return (
                   <View style={styles.profileImg}>
-                        <Image 
+                        <Image  
                               source={{uri:image}}  
                               style={{width: 120, height: 120, borderRadius: 200/ 2, borderWidth:1 , borderColor:"gray"}} 
                         />
