@@ -28,7 +28,7 @@ const PostFeed = (props) => {
   let profilePicture = ""
   const updateIndex = (selectedIndex) => {
     setSelectedIndex(selectedIndex);
-    selectedIndex == 1 ? props.navigation.navigate("FollowingGroup") : null;
+    selectedIndex == 1 ? props.navigation.navigate("FollowingTwo") : null;
     selectedIndex == 2 ? props.navigation.navigate("Profile") : null;
   };
 

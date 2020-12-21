@@ -4,7 +4,7 @@ import Feather from "react-native-vector-icons/Feather"
 import * as ImagePicker from 'expo-image-picker';
 import { updateProfileImg } from "../../utils/Auth/Auth.service"
 import Firebase from '../../config/Firebase';
-
+// import img from "../../assets/cover.png"
 
 export default function imageData(props) {
       const [image,setImage] = useState("")

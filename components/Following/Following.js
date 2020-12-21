@@ -166,7 +166,7 @@ const PostFeed = (props) => {
   // console.log("POSTS", posts);
 
   return (
-    <>
+    <> 
       <View style={styles.container2}>
         <NavHeader
           history={history}

@@ -9,6 +9,7 @@ import Donation from "../components/DonateBox/Donate";
 import Credit from "../components/CreditCard/Credit";
 import AddFunds from "../components/AddFunds/AddFunds";
 import CreatePost from "../components/PostFeed/CreatePost/CreatePost";
+import FollowingTwo from "../components/Following/Following2"
 const SwitchNavigator = createSwitchNavigator(
   {
     Login: {
@@ -43,9 +44,13 @@ const SwitchNavigator = createSwitchNavigator(
     AddFunds: {
       screen: AddFunds,
     },
+    FollowingTwo:{
+      screen: FollowingTwo,
+    }
+    
   },
   {
-    initialRouteName: "PostFeed",
+    initialRouteName: "FollowingTwo",
   }
 );
 

@@ -5,12 +5,15 @@ import { TouchableOpacity, Image } from "react-native";
 import { Header } from "react-native-elements";
 import { Icon } from "react-native-elements";
 import { Button } from "react-native-elements";
+import { MyContext } from "../../context/context";
 
 
 class Donation extends React.Component {
-  
+  static contextType = MyContext
   render() {
-   
+    // const amount = 1
+   const amount = this.context.amount
+   console.log("abc",amount)
     const LogoIcon = () => {
       return (
         <TouchableOpacity
@@ -58,7 +61,6 @@ class Donation extends React.Component {
           }}
         />
         <View style={styles.maincontainer}>
-          {/* <Text style={styles.balance}> Balance</Text> */}
           <Header
             placement="left"
             leftComponent={() => LogoIcon()}
@@ -75,7 +77,7 @@ class Donation extends React.Component {
           />
 
           <View style={styles.maincontainer2}>
-            <Text style={styles.money}> $00.00</Text>
+            <Text style={styles.money}> ${amount}</Text> 
             <View style={styles.touchbutton}>
               <TouchableOpacity
                 style={styles.button}

@@ -12,17 +12,24 @@ import { Switch } from "react-native";
 import { Icon } from "react-native-elements";
 import { Dimensions } from 'react-native';
 import { Alert } from "react-native";
+import { MyContext } from "../../context/context";
 
 // import { Button } from "react-native-elements";
 // import { Switch } from "react-native-gesture-handler";
 class AddFunds extends React.Component {
+  constructor({navigation}){
+    super()
+    this.history = navigation
+  }
+  static contextType = MyContext
   state = {
     showPaymentMethod : false,
     showCreditCardNo : false,
-    amount : 0,
+    amount : 400,
     creditCardNo : ""
   }
   render() {
+    const {updateAmount} = this.context
     const windowWidth = Dimensions.get('window').width;
     const LogoIcon = () => {
       return (
@@ -75,8 +82,10 @@ class AddFunds extends React.Component {
         <TouchableOpacity
             style={styles.button}
             onPress={() => {
-              if(this.state.creditCardNo == 16){
+              if(this.state.creditCardNo.length == 16){
+                updateAmount(this.state.amount)
                 Alert.alert("Successfully added your fund.")
+                this.history.navigate("Donation")
               }else{
                 Alert.alert("kindly check your number")
               }

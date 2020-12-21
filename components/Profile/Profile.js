@@ -9,10 +9,11 @@ import CoverImageData from "./coverImageData"
 import AddBio from "./addBio";
 import Firebase from "../../config/Firebase";
 import { Dimensions } from 'react-native';
-
+import {MyContext} from "../../context/context"
 
 
 export default class Profile extends Component {
+  static contextType = MyContext
 
   constructor({navigation}){
     super()
@@ -85,7 +86,6 @@ export default class Profile extends Component {
           }
         })
       });
-
   }
   render() {
     let logout = this.state.showLogout  ?
@@ -93,7 +93,6 @@ export default class Profile extends Component {
     <View style={{
       position : "absolute",
       bottom : 0,
-      // top : 200,
       flex :1,
       width : this.windowWidth,
       backgroundColor : "#268c77"
@@ -107,22 +106,6 @@ export default class Profile extends Component {
     </View>
     : <View></View>
 
-      // <View style={{ position : "absolute",top :50,    }}>
-      //   <TouchableOpacity onPress={()=>this.history.navigate("Login")}>
-      //             <Text style={{
-      //                       textAlign : "center",
-      //                       marginRight : 6,
-      //                       padding : 3,
-      //                       width : 60,
-      //                       borderColor : "gray",
-      //                       borderWidth : 1,
-      //                       color : "gray"
-      //                       }}
-      //             >
-      //               Logout
-      //             </Text>
-      // </TouchableOpacity>
-      // </View>
     return (
       <>
         <View style={styles.container2}>
