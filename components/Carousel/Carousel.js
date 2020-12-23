@@ -5,6 +5,7 @@ import {
   Dimensions,
   StyleSheet,
   Platform,
+  Image
 } from "react-native";
 import { Header } from "react-native-elements";
 
@@ -26,16 +27,16 @@ const ENTRIES1 = [
     illustration: "https://i.postimg.cc/XvFRbgyw/a.jpg",
   },
 ];
-const { width: screenWidth } = Dimensions.get("window");
+const windowWidth = Dimensions.get('window').width;
 
 const MainCarousel = (props) => {
   const [entries, setEntries] = useState([]);
   const carouselRef = useRef(null);
 
 
-  // const goForward = () => {
-  //   carouselRef.current.snapToNext();
-  // };
+  const goForward = () => {
+    carouselRef.current.snapToNext();
+  };
 
   useEffect(() => {
     setEntries(ENTRIES1);
@@ -45,13 +46,13 @@ const MainCarousel = (props) => {
   //   return (  
   //     <View style={styles.item}>
 
-  //       <ParallaxImage 
+  //       {/* <ParallaxImage 
   //         source={{ uri: item.illustration }}
   //         containerStyle={styles.imageContainer}
   //         style={styles.image}
   //         parallaxFactor={0.4}
   //         {...parallaxProps}
-  //       />   
+  //       />    */}
   //     </View>
   //   );
   // };
@@ -69,27 +70,9 @@ const MainCarousel = (props) => {
             fontFamily: "serif",
           },
         }}
-        // containerStyle={{
-        //   backgroundColor: "#268c77",
-        //   justifyContent: "space-around",
-        //   paddingBottom: 15,
-        //   height: 30,
-        //   marginTop: 6,
-        // }}
       />
-      {/* <Carousel
-        ref={carouselRef}
-        sliderWidth={screenWidth}
-        sliderHeight={screenWidth}
-        itemWidth={screenWidth - 1}
-        data={entries}
-        renderItem={renderItem}
-        hasParallaxImages={true}
-        autoplay={true}
-        autoplayDelay={1}
-        loop={true}
-      /> */}
-    </View>
+  </View>
+
   );
 };
 

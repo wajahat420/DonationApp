@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -14,16 +14,21 @@ import {
   Icon,
   Input,
   Image,
-  ButtonGroup,
   Avatar,
 } from "react-native-elements";
 import MainCarousel from "../Carousel/Carousel";
 import Firebase from "../../config/Firebase";
+import { MyContext } from "../../context/context";
+import { uploadComment } from "../../utils/Auth/Auth.service";
+
 const PostFeed = (props) => {
-  // props.navigation.navigate("Login")
+  const {cartOpened}  = useContext(MyContext)
+  
   const [selectedIndex, setSelectedIndex] = useState(1);
   const [posts, setPosts] = useState([]);
-  const [currentCategory,setCurrentCategory] = useState(0)
+  const [userID, setUserID] = useState("")
+  const [loggedUserName,setLoggedUserName] = useState("")
+  const [comment, setComment] = useState("")
 
   const updateIndex = (selectedIndex) => {
     setSelectedIndex(selectedIndex);
@@ -32,32 +37,31 @@ const PostFeed = (props) => {
   };
 
   useEffect(() => {
-    console.log("useEffect")
     var postFeeds = Firebase.database().ref("/posts");
     postFeeds.once("value").then((snapshot) => {
       const data = snapshot.val();
-      console.log("data",data)
-      myData = []
+      var myData = []
       if(data != null){
-        var myData = Object.keys(data).map((key) => {
-          return data[key];
+        myData = Object.keys(data).map((key) => {
+          let obj = data[key]
+          obj["postID"] = key
+          return obj;
         });
       }
-      console.log("POSTS", myData);
-
       setPosts(myData);
     });
+
+    Firebase.auth().onAuthStateChanged(function (user) {
+      if (user) {
+        setUserID(user.uid);
+        setLoggedUserName(user.displayName);
+      } 
+    });
   }, []);
-  const buttons = ["All", "Education", "Food","Donation"];
 
   const filterCategory = (elem) => {
-    console.log("here")
-    
-    console.log("elem==",elem,elem.category,currentCategory)
-     if(buttons[currentCategory] === "All"){
-       return true
-     }
-     return buttons[currentCategory] === elem.category
+  
+     return elem.category === cartOpened
      
   }
   
@@ -65,6 +69,8 @@ const PostFeed = (props) => {
   // console.log("posts", posts);
 
   const getAllPosts = posts.filter(elem=>filterCategory(elem)).map((data) => {
+  const comments = data.comments === undefined ? {} : data.comments 
+
     return (
       <>
         <View
@@ -141,6 +147,33 @@ const PostFeed = (props) => {
               />
             </TouchableOpacity>
           </View>
+          {Object.keys(comments).map(key=>{
+                const commentObj = comments[key]
+                const profilePicture = ""
+                  return(
+                    <View>
+                      <View style={{ flexDirection: "row" }}>
+                        <Avatar
+                          rounded
+                          size={25}
+                          source={{uri:`data:image/png;base64,${profilePicture}`}}  
+                        /> 
+                        <Text
+                          style={{
+                            color: "#268c77",
+                            fontSize: 15,
+                            fontWeight: "bold",
+                            marginLeft: 5,
+                            paddingBottom: 5,
+                          }}
+                        >
+                          {commentObj.username}
+                        </Text>
+                      </View>
+                      <Text style={{ color: "#787878" }}>{commentObj.comment}</Text>
+                    </View>
+                  )
+                })}
           <View style={{ width: 330, position: "relative", right: 10 }}>
             <Input
               placeholder="Comment"
@@ -150,11 +183,15 @@ const PostFeed = (props) => {
                   type="evilicon"
                   color="#737373"
                   size={25}
+                  onPress ={()=>{
+                    uploadComment(userID,data.postID,comment,loggedUserName)
+                    
+                  }}
                 />
               }
               style={{ fontSize: 13 }}
 
-              // onChangeText={(value) => this.setState({ comment: value })}
+              onChangeText={(value) => setComment(value)}
             />
           </View>
         </View>
@@ -174,13 +211,13 @@ const PostFeed = (props) => {
           setSelectedIndex={setSelectedIndex}
           updateIndex={updateIndex}
         />
-        <ButtonGroup
+        {/* <ButtonGroup
           onPress={setCurrentCategory}
           selectedIndex={currentCategory}
           buttons={buttons}
           containerStyle={{ height: 35 }}
           selectedButtonStyle={{ backgroundColor: "#268c77" }}
-        />
+        /> */}
 
         <ScrollView>
           <View>{getAllPosts}</View>

@@ -4,7 +4,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
+  ScrollView
 } from "react-native";
 import NavHeader from "../Header/Header";
 import Footer from "../Footer/Footer";
@@ -12,20 +12,23 @@ import {
   Header,
   Icon,
   Input,
-  Image,
   Avatar,
+  Image
 } from "react-native-elements";
 import MainCarousel from "../Carousel/Carousel";
 import Firebase from "../../config/Firebase";
 import { uploadComment } from "../../utils/Auth/Auth.service";
+
 const PostFeed = (props) => {
+  let iterate = true
   
+  const [profilePicture,setProfilePicture] = useState([]) 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [posts, setPosts] = useState([]);
   const [comment, setComment] = useState("")
   const [userID, setUserID] = useState("")
   const [loggedUserName,setLoggedUserName] = useState("")
-  let profilePicture = ""
+
   const updateIndex = (selectedIndex) => {
     setSelectedIndex(selectedIndex);
     selectedIndex == 1 ? props.navigation.navigate("FollowingTwo") : null;
@@ -54,33 +57,59 @@ const PostFeed = (props) => {
       } 
     });
   }, []);
-  const getProfileAndCoverURL = async(obj)=>{
-      await Firebase.storage().ref().child('profile_pictures/'+obj.profile_picture).getDownloadURL().then(function(url) {
-        profilePicture = url
-        console.log("url",profilePicture)
-      })
+  const getProfile = async(arr)=>{
+      let temp = []
+        for(let i=0;i<arr.length;i++){
+          let profilePicture = arr[i]
+          if(profilePicture !== ""){
+            await Firebase.storage().ref().child('profile_pictures/'+profilePicture).getDownloadURL().then(function(url) {
+              temp.push(url)
+            })
+          }else{
+            temp.push("")
+          }
+        }
+        console.log("chck",temp)
+      setProfilePicture(temp)
+      
     }
-  const additional_info = async(id)=>{
-
+  const additional_info = async(idArr)=>{
+    iterate  = false
     await Firebase.database().ref("/additional_info").once("value").then((snapshot) => {
       const data = snapshot.val();  
+      let temp = []
 
-      Object.keys(data).forEach(elem=>{
-        if(data[elem].userID == id && data[elem].profile_picture !== ""){
-          getProfileAndCoverURL(data[elem])
+      idArr.forEach(id => {
+        let found  =false
+        Object.keys(data).forEach(elem=>{
+
+          if(data[elem].userID == id && data[elem].profile_picture !== ""){
+            found = true
+            temp.push(data[elem].profile_picture)
+            
+          }
+        })
+        if(!found){
+          temp.push("")
         }
       })
+      getProfile(temp)
+  
     });
   }
+  console.log("temp",profilePicture)
 
+    const allUserID = []
     const getAllPosts =  posts.map( (data,key) => {
-    const comments = data.comments === undefined ? {} : data.comments 
-      // console.log("before",profilePicture) 
-      // await additional_info(data.userID)
+      const comments = data.comments === undefined ? {} : data.comments 
+      allUserID.push(data.userID)
+      if(posts.length-1 == key && iterate){
+        additional_info(allUserID)
+      }
 
-      // console.log("after",profilePicture)
        return (      
             <>
+         
               <View
                 key = {key}
                 style={{
@@ -95,7 +124,7 @@ const PostFeed = (props) => {
                       rounded
                       size={25}
                       source={{
-                        uri: profilePicture,
+                        uri: profilePicture[key],
                       }}
                     />
                     <Text
@@ -138,7 +167,7 @@ const PostFeed = (props) => {
                     <Image
                       style={{ width: 15, height: 15, marginRight: 10 }}
                       source={{
-                        uri: profilePicture,
+                        uri: "https://i.postimg.cc/BQtqwgFm/supporticon.jpg",
                       }}
                     />
                   </TouchableOpacity>
@@ -156,14 +185,12 @@ const PostFeed = (props) => {
                     />
                   </TouchableOpacity>
                 </View>
-                {Object.keys(comments).map(key=>{
-                const commentObj = comments[key]
-    
+                {Object.keys(comments).map((key,index)=>{
+                const commentObj = comments[key] 
+                  
                   return(
                     <View style={{
-                      // borderWidth:1,
-                      // borderColor:"gray",
-                      // borderRadius:10
+               
                     }}>
                       <View style={{ flexDirection: "row" }}>
                         <Avatar
@@ -198,7 +225,7 @@ const PostFeed = (props) => {
                         size={25}
                         onPress ={()=>{
                           uploadComment(userID,data.postID,comment,loggedUserName)
-                          window.location.reload(false)
+                          // window.location.reload(false)
                           
                         }}
                       />
@@ -212,6 +239,7 @@ const PostFeed = (props) => {
             </>
        )
     })
+
             
   const LeftIcon = () => {
     return (

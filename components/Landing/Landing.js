@@ -1,9 +1,9 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity,Image } from "react-native";
 
 class Landing extends React.Component {
   handleSignUp = () => {
-    this.props.navigation.navigate("Signup");
+    // this.props.navigation.navigate("Signup");
   };
 
   handleLogin = () => {
@@ -12,13 +12,15 @@ class Landing extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Landing Screen</Text>
+        <Image 
+          resizeMode={'contain'}
+          source={require("../../assets/hh2.png")}  
+          style={{width:"100%",top:120,height:290,resizeMode: 'stretch',position:"absolute"}} 
+        />    
         <TouchableOpacity style={styles.button} onPress={this.handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
+          <Text style={styles.buttonText}>Get Started</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={this.handleSignUp}>
-          <Text style={styles.buttonText}>Signup</Text>
-        </TouchableOpacity>
+
       </View>
     );
   }
@@ -38,11 +40,13 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     paddingVertical: 5,
     alignItems: "center",
-    backgroundColor: "#268c77",
+    backgroundColor: "#268c68",
     borderColor: "#268c77",
     borderWidth: 1,
     borderRadius: 5,
-    width: 100,
+    width: 180,
+    position : "absolute",
+    bottom : 50,
   },
   buttonText: {
     fontSize: 20,

@@ -49,7 +49,7 @@ export default class Profile extends Component {
     if (obj.profile_picture !== ""){
       await storageRef.child('profile_pictures/'+obj.profile_picture).getDownloadURL().then(function(url) {
             profile_picture = url
-            console.log("url",profile_picture)
+
       })
     }
     if(obj.cover_picture !== ""){
@@ -136,15 +136,6 @@ export default class Profile extends Component {
                     <TouchableOpacity onPress={()=>Share.share(this.shareOptions)}>
                       <AntDesign  name="sharealt" size={25} color="#268c77"/>
                     </TouchableOpacity>
-                  </View>
-                  <View style={styles.profileDetail}>
-                    <Text style = {{textAlign:'center', color:'gray'}}>0</Text>
-                    <Text style = {{color:'gray'}}>followers</Text>
-                  </View>
-                  <View style={styles.profileDetail}>
-  
-                    <Text style = {{textAlign:'center',color:"gray"}}>0</Text>
-                    <Text style = {{color:'gray'}}>following</Text>
                   </View>
                 
                 </View>

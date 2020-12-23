@@ -1,9 +1,12 @@
-import React from "react";
+import React, {useContext} from "react";
 import { View, StyleSheet, TouchableOpacity, Image, Text } from "react-native";
 import { Header, ButtonGroup } from "react-native-elements";
+import { MyContext } from "../../context/context";
+
 
 const NavHeader = (props) => {
   const { selectedIndex, updateIndex } = props;
+  const {amount} = useContext(MyContext)
 
   const balanceCardIcon = () => {
     return (
@@ -12,6 +15,7 @@ const NavHeader = (props) => {
           props.history.navigate("Donation");
         }}
       >
+        
         <View style={styles.balanceIcon}>
           <View>
             <Image
@@ -22,7 +26,7 @@ const NavHeader = (props) => {
             />
           </View>
           <View style={{ flexDirection: "column" }}>
-            <Text style={{ fontWeight: "bold", fontSize: 15 }}>$0</Text>
+            <Text style={{ fontWeight: "bold", fontSize: 15 }}>${amount}</Text>
             <Text style={{ color: "#737373", fontSize: 10 }}>Balance</Text>
           </View>
         </View>

@@ -13,7 +13,7 @@ class Donation extends React.Component {
   render() {
     // const amount = 1
    const amount = this.context.amount
-   console.log("abc",amount)
+
     const LogoIcon = () => {
       return (
         <TouchableOpacity

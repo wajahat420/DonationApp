@@ -50,7 +50,7 @@ const SwitchNavigator = createSwitchNavigator(
     
   },
   {
-    initialRouteName: "FollowingTwo",
+    initialRouteName: "Landing",
   }
 );
 

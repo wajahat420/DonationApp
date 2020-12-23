@@ -5,7 +5,7 @@ import { updateCoverImg } from "../../utils/Auth/Auth.service"
 import Firebase from "../../config/Firebase"
 
 export default function imageData(props) {
-      const [image,setImage] = useState("")
+      let [image,setImage] = useState("")
 
       if(props.cover_picture !== "" && image === ""){
             setImage(props.cover_picture)
@@ -36,14 +36,23 @@ export default function imageData(props) {
 
             }
       };
-    
+      let img =            
+                   <Image 
+                  resizeMode={'contain'}
+                  source={{uri:image}}  
+                  style={{width:"100%",top:0,height:200,resizeMode: 'stretch',position:"absolute"}} 
+                  />  
+      if(image === ""){
+            img = 
+            <Image 
+            resizeMode={'contain'}
+            source={require("../../assets/dp.png")}  
+            style={{width:"100%",top:0,height:200,resizeMode: 'stretch',position:"absolute"}} 
+            />        
+      }
       return (
             <View style={styles.addImg}>
-                  <Image 
-                        resizeMode={'contain'}
-                        source={{uri:image}}  
-                        style={{width:"100%",top:0,height:200,resizeMode: 'stretch',position:"absolute"}} 
-                  />                  
+                  {img}              
                    <TouchableOpacity onPress={pickImage}>
                       <Text style={styles.addImgTxt}>Add Image</Text>
                   </TouchableOpacity>

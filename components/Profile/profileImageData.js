@@ -7,7 +7,7 @@ import Firebase from '../../config/Firebase';
 // import img from "../../assets/cover.png"
 
 export default function imageData(props) {
-      const [image,setImage] = useState("")
+      let [image,setImage] = useState("")
     
       if(props.profile_picture !== "" && image === ""){
             setImage(props.profile_picture)
@@ -37,13 +37,22 @@ export default function imageData(props) {
                   updateProfileImg(props.userID,filename)
             }
       };
-      console.log("image",image)
+
+      let img =            
+      <Image  
+            source={{uri:image}}  
+            style={{width: 120, height: 120, borderRadius: 200/ 2, borderWidth:1 , borderColor:"gray"}} 
+      />
+      if(image === ""){
+            img = 
+            <Image  
+                  source={require("../../assets/dp.png")}  
+                  style={{width: 120, height: 120, borderRadius: 200/ 2, borderWidth:1 , borderColor:"gray"}} 
+            />      
+      }
       return (
                   <View style={styles.profileImg}>
-                        <Image  
-                              source={{uri:image}}  
-                              style={{width: 120, height: 120, borderRadius: 200/ 2, borderWidth:1 , borderColor:"gray"}} 
-                        />
+                        {img}
       
                         <View style={{marginLeft:90,position:"relative",display:"flex",alignItems:"center",top:-40}}>
                               <TouchableOpacity  onPress={pickImage}>

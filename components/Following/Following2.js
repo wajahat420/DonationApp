@@ -1,27 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet ,TouchableOpacity,ScrollView,Switch} from "react-native";
 import NavHeader from "../Header/Header";
 import Footer from "../Footer/Footer";
 import { Card, ListItem, Button, Icon } from 'react-native-elements'
+import { MyContext } from "../../context/context";
 
 
 const FollowingTwo = (props) => {
-  const [selectedIndex, setSelectedIndex] = useState(1);
-  const updateIndex = (selectedIndex) => {
-    setSelectedIndex(selectedIndex);
-    selectedIndex == 0 ? props.navigation.navigate("PostFeed") : null;
-    selectedIndex == 2 ? props.navigation.navigate("Profile") : null;
-  };
-  const users = [
-    {
-       name: 'brynn',
-       avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
-    },
-   
-   ]
+      const {openCart} = useContext(MyContext) 
+      // console.log("open",openCart)
+      const [selectedIndex, setSelectedIndex] = useState(1);
+      const updateIndex = (selectedIndex) => {
+      setSelectedIndex(selectedIndex);
+      selectedIndex == 0 ? props.navigation.navigate("PostFeed") : null;
+      selectedIndex == 2 ? props.navigation.navigate("Profile") : null;
+      };
+      const users = [
+      {
+            name: 'brynn',
+            avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
+      },
+      
+      ]
    
   const history = props.navigation;
-  console.log(props.navigation)
 
   return (
     <>
@@ -40,6 +42,7 @@ const FollowingTwo = (props) => {
          
           <TouchableOpacity
           onPress = {()=>{
+                openCart("Groceries")
                 history.navigate("FollowingGroup")
           }}
           > 
@@ -51,7 +54,6 @@ const FollowingTwo = (props) => {
             style = {{width:115,height:100}}
             
             />
-          {props.navigation.navigate("Grocery")} 
             
         </Card>
         </TouchableOpacity> 
@@ -59,6 +61,7 @@ const FollowingTwo = (props) => {
         
         <TouchableOpacity
         onPress = {()=>{
+            openCart("Scholarship")
             history.navigate("FollowingGroup")
       }}
         > 
@@ -67,7 +70,7 @@ const FollowingTwo = (props) => {
         <Card.Title>Scolarships</Card.Title>
           
         <Card.Divider/>
-            <Card.Image source={require('../.././assets/imagesScolar.jpeg')} 
+            <Card.Image source={require('../.././assets/clothes.jpeg')} 
                   style = {{width:115,height:100}}
             />
         </Card>
@@ -76,6 +79,7 @@ const FollowingTwo = (props) => {
     <View style = {styles.MediClothes}>  
         < TouchableOpacity
         onPress = {()=>{
+            openCart("Clothes")
             history.navigate("FollowingGroup")
       }}
         > 
@@ -83,7 +87,7 @@ const FollowingTwo = (props) => {
         <Card.Title>Clothes</Card.Title>
           
         <Card.Divider/>
-            <Card.Image source={require('../.././assets/clothes.jpeg')} 
+            <Card.Image source={require('../.././assets/Donate.jpeg')} 
             style = {{width:115,height:100}}
             
             />
@@ -93,6 +97,7 @@ const FollowingTwo = (props) => {
       </TouchableOpacity> 
       <TouchableOpacity
       onPress = {()=>{
+            openCart("Money")
             history.navigate("FollowingGroup")
       }}
       > 
@@ -101,7 +106,7 @@ const FollowingTwo = (props) => {
         <Card.Title>Money</Card.Title>
           
         <Card.Divider/>
-            <Card.Image source={require('../.././assets/Donate.jpeg')} 
+            <Card.Image source={require('../.././assets/imagesScolar.jpeg')} 
             style = {{width:115,height:100}}
             
             />

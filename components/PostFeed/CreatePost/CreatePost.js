@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text, TouchableOpacity, Image ,Alert} from "react-native";
 import { Header, Icon, Avatar, Input } from "react-native-elements";
 import {
-  getCurrentUserData,
   createPost,
 } from "../../../utils/Auth/Auth.service";
 import Firebase from "../../../config/Firebase";
@@ -11,7 +10,7 @@ const CreatePost = (props) => {
   const [value, setValue] = useState("");
   const [loggedUser, setLoggedUserName] = useState();
   const [userID, setUserID] = useState();
-  const [categories,setCategories] = useState(["Education","Food","Donation"])
+  const [categories,setCategories] = useState(["Groceries","Scholarship","Clothes","Money"])
   const [selectedCategory,setSelectedCategory] = useState("Category")
   const [displayCategory,setdisplayCategory] = useState("none")
 
@@ -140,7 +139,7 @@ const CreatePost = (props) => {
           <View style={{flex:1,marginTop : 12,marginLeft:5}}>
             <TouchableOpacity onPress={()=>setdisplayCategory(displayCategory == "none" ? "flex" : "none")}>
               <Text style={{paddingBottom:10,fontSize:13,textAlign:"center",borderColor:"gray",borderBottomWidth:1}}>{selectedCategory}</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> 
             {categories.map((elem,index)=>
               <TouchableOpacity onPress={()=>setSelectedCategory(elem)}>
                  <View style={{display:displayCategory}}>
@@ -164,7 +163,7 @@ const CreatePost = (props) => {
               </TouchableOpacity>
             )}
           </View> 
-          <View style={{flex:5,  margin: 0}}>
+          <View style={{flex:4,  margin: 0}}>
             <Input
               placeholder="Share your thoughts here"
               onChangeText={(value) => setValue(value)}
